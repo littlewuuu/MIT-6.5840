@@ -39,9 +39,9 @@ func (kv *KVServer) Put(args *PutAppendArgs, reply *PutAppendReply) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	res := kv.histories[enc]
-	if res != "" { //
-		reply.Value = res
+	val, ok := kv.histories[enc]
+	if ok { // 重复请求
+		reply.Value = val
 		return
 	}
 	kv.storage[args.Key] = args.Value
@@ -57,16 +57,14 @@ func (kv *KVServer) Append(args *PutAppendArgs, reply *PutAppendReply) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	res := kv.histories[enc]
-	if res != "" { //  fixme 不能使用空字符串判断请求是否重复，因为第一次请求后，放入 histories 的也是空字符串
-		println("dub res", res)
+	res, ok := kv.histories[enc]
+	if ok { // 重复请求
 		reply.Value = res
 		return
 	}
 	oldVal := kv.storage[args.Key]
 	kv.storage[args.Key] = oldVal + args.Value
 	reply.Value = oldVal
-	println("oldVal", oldVal, "new Value", args.Value)
 	kv.histories[enc] = oldVal
 }
 
