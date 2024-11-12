@@ -27,6 +27,7 @@ func MakeClerk(server *labrpc.ClientEnd) *Clerk {
 	// You'll have to add code here.
 	ck.clintId = nrand()
 	ck.reqSeq = atomic.Uint64{}
+	ck.reqSeq.Add(1)
 	return ck
 }
 
@@ -73,6 +74,7 @@ func (ck *Clerk) PutAppend(key string, value string, op string) string {
 	for !ck.server.Call("KVServer."+op, &args, &reply) {
 	}
 	finishReply := PutAppendReply{}
+	// 如果不发送 Finish 请求，server 总会保留最后一次请求的结果，过不了 test
 	for !ck.server.Call("KVServer.Finish", &args, &finishReply) {
 	}
 	return reply.Value
