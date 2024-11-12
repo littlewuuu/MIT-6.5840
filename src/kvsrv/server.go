@@ -63,8 +63,16 @@ func (kv *KVServer) Append(args *PutAppendArgs, reply *PutAppendReply) {
 
 	res, ok := kv.histories[clientId]
 	if ok {
-		if seq <= res.reqSeq { // 重复请求
+		// 重复请求
+		// client 的当前请求未收到响应，但 server 已经处理过该请求，此时 client 重发请求，返回的 value 才有意义，
+		// 也就是说 seq == res.reqSeq 时，返回的 value 才有意义
+		if seq == res.reqSeq {
 			reply.Value = res.value
+			return
+		}
+		// 如果 seq < res.reqSeq，说明 client 的 seq 请求已经处理完成了，也就是说 server 已经处理过 client seq 之后的请求了，
+		// 这时返回 value 是没有意义的，因为无论如何 client 都会丢弃这个响应
+		if seq < res.reqSeq {
 			return
 		}
 	}
