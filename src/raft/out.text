@@ -1,0 +1,922 @@
+000005 T0000 DBUG S0 Make
+000006 T0000 VOTE S0 Follower->Candidate, For T0
+000008 T0000 LOG1 S0 Reset Election Timer
+000008 T0001 DBUG S0 start election
+000009 T0000 DBUG S1 Make
+000010 T0000 DBUG S2 Make
+Test (3A): initial election ...
+000010 T0000 VOTE S2 Follower->Candidate, For T0
+000010 T0000 LOG1 S2 Reset Election Timer
+000010 T0000 VOTE S1 Follower->Candidate, For T0
+000010 T0000 LOG1 S1 Reset Election Timer
+000010 T0001 DBUG S1 start election
+000010 T0001 DBUG S2 start election
+000013 T0001 VOTE S1 Received RequestVote RPC, from S2,
+000013 T0001 VOTE S1 -> S2, Reject, Already voted to S1
+000013 T0001 VOTE S0 Received RequestVote RPC, from S1,
+000013 T0001 VOTE S0 -> S1, Reject, Already voted to S0
+000014 T0001 VOTE S1 Received RequestVote RPC, from S0,
+000014 T0001 VOTE S1 -> S0, Reject, Already voted to S1
+000013 T0001 VOTE S2 Received RequestVote RPC, from S0,
+000014 T0001 VOTE S2 -> S0, Reject, Already voted to S2
+000014 T0001 VOTE S0 Received RequestVote RPC, from S2,
+000015 T0001 VOTE S0 -> S2, Reject, Already voted to S0
+000015 T0001 VOTE S2 Received RequestVote RPC, from S1,
+000015 T0001 VOTE S2 -> S1, Reject, Already voted to S2
+003332 T0001 VOTE S2 Candidate->Candidate, For T1
+003333 T0001 LOG1 S2 Reset Election Timer
+003335 T0002 DBUG S2 start election
+003340 T0001 VOTE S1 Received RequestVote RPC, from S2,
+003340 T0001 LOG1 S1 Candidate -> Follower, T1 -> T2
+003340 T0002 LOG1 S1 Reset Election Timer
+003340 T0002 VOTE S1 -> S2, vote granted
+003341 T0002 VOTE S2 Vote from S1, total votes 2
+003341 T0002 LEAD S2 Candidate Become leader in T2
+003344 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+003344 T0002 LOG1 S1 Reset Election Timer
+003346 T0001 VOTE S0 Received RequestVote RPC, from S2,
+003346 T0001 LOG1 S0 Candidate -> Follower, T1 -> T2
+003346 T0002 LOG1 S0 Reset Election Timer
+003346 T0002 VOTE S0 -> S2, vote granted
+003346 T0002 VOTE S2 Lost Context, abort RequestVoteReply from S0
+003347 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+003347 T0002 LOG1 S0 Reset Election Timer
+005359 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+005361 T0002 LOG1 S1 Reset Election Timer
+005363 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+005363 T0002 LOG1 S0 Reset Election Timer
+007365 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+007366 T0002 LOG1 S1 Reset Election Timer
+007365 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+007366 T0002 LOG1 S0 Reset Election Timer
+009383 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+009384 T0002 LOG1 S1 Reset Election Timer
+009386 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+009386 T0002 LOG1 S0 Reset Election Timer
+011390 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+011390 T0002 LOG1 S1 Reset Election Timer
+011390 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+011391 T0002 LOG1 S0 Reset Election Timer
+013430 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+013431 T0002 LOG1 S1 Reset Election Timer
+013432 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+013433 T0002 LOG1 S0 Reset Election Timer
+015432 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+015432 T0002 LOG1 S0 Reset Election Timer
+015432 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+015433 T0002 LOG1 S1 Reset Election Timer
+017485 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+017486 T0002 LOG1 S0 Reset Election Timer
+017486 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+017486 T0002 LOG1 S1 Reset Election Timer
+019481 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+019482 T0002 LOG1 S1 Reset Election Timer
+019481 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+019483 T0002 LOG1 S0 Reset Election Timer
+021492 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+021493 T0002 LOG1 S1 Reset Election Timer
+021493 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+021493 T0002 LOG1 S0 Reset Election Timer
+023524 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+023525 T0002 LOG1 S1 Reset Election Timer
+023526 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+023526 T0002 LOG1 S0 Reset Election Timer
+025527 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+025527 T0002 LOG1 S0 Reset Election Timer
+025527 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+025529 T0002 LOG1 S1 Reset Election Timer
+027537 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+027537 T0002 LOG1 S1 Reset Election Timer
+027540 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+027540 T0002 LOG1 S0 Reset Election Timer
+029541 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+029542 T0002 LOG1 S1 Reset Election Timer
+029541 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+029544 T0002 LOG1 S0 Reset Election Timer
+  ... Passed --   3.1  3   36    4464    0
+030646 T0000 DBUG S0 Make
+030648 T0000 VOTE S0 Follower->Candidate, For T0
+030648 T0000 LOG1 S0 Reset Election Timer
+030648 T0000 DBUG S1 Make
+030648 T0001 DBUG S0 start election
+030649 T0000 DBUG S2 Make
+Test (3A): election after network failure ...
+030649 T0000 VOTE S1 Follower->Candidate, For T0
+030649 T0000 LOG1 S1 Reset Election Timer
+030649 T0001 DBUG S1 start election
+030651 T0000 VOTE S2 Received RequestVote RPC, from S1,
+030651 T0000 LOG1 S2 Follower -> Follower, T0 -> T1
+030651 T0001 LOG1 S2 Reset Election Timer
+030651 T0001 VOTE S2 -> S1, vote granted
+030652 T0001 VOTE S1 Received RequestVote RPC, from S0,
+030652 T0001 VOTE S1 -> S0, Reject, Already voted to S1
+030655 T0001 VOTE S1 Vote from S2, total votes 2
+030655 T0001 LEAD S1 Candidate Become leader in T1
+030655 T0001 VOTE S0 Received RequestVote RPC, from S1,
+030655 T0001 VOTE S0 -> S1, Reject, Already voted to S0
+030656 T0001 VOTE S1 Lost Context, abort RequestVoteReply from S0
+030656 T0001 VOTE S2 Received RequestVote RPC, from S0,
+030656 T0001 VOTE S2 -> S0, Reject, Already voted to S1
+030656 T0001 VOTE S2 Received AppendEntries RPC, from S1,
+030656 T0001 LOG1 S2 Reset Election Timer
+030657 T0001 VOTE S0 Received AppendEntries RPC, from S1,
+030657 T0001 LOG1 S0 Reset Election Timer
+032671 T0001 VOTE S2 Received AppendEntries RPC, from S1,
+032671 T0001 LOG1 S2 Reset Election Timer
+032674 T0001 VOTE S0 Received AppendEntries RPC, from S1,
+032674 T0001 LOG1 S0 Reset Election Timer
+034694 T0001 VOTE S2 Received AppendEntries RPC, from S1,
+034695 T0001 LOG1 S2 Reset Election Timer
+034697 T0001 VOTE S0 Received AppendEntries RPC, from S1,
+034697 T0001 LOG1 S0 Reset Election Timer
+038635 T0001 VOTE S2 Follower->Candidate, For T1
+038635 T0001 LOG1 S2 Reset Election Timer
+038635 T0002 DBUG S2 start election
+038637 T0001 VOTE S0 Received RequestVote RPC, from S2,
+038637 T0001 LOG1 S0 Candidate -> Follower, T1 -> T2
+038637 T0002 LOG1 S0 Reset Election Timer
+038637 T0002 VOTE S0 -> S2, vote granted
+038638 T0002 VOTE S2 Vote from S0, total votes 2
+038638 T0002 LEAD S2 Candidate Become leader in T2
+038639 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+038639 T0002 LOG1 S0 Reset Election Timer
+040650 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+040651 T0002 LOG1 S0 Reset Election Timer
+041097 T0002 DBUG S2 Ask vote from S1, lost or error
+042659 T0001 VOTE S1 Received AppendEntries RPC, from S2,
+042660 T0001 LOG1 S1 AppendEntries Handler: Become follower
+042660 T0001 LOG1 S1 Leader -> Follower, T1 -> T2
+042660 T0002 LOG1 S1 Reset Election Timer
+042659 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+042660 T0002 LOG1 S0 Reset Election Timer
+042721 T0002 LOG1 S1 Lost leader[1] to Follower[T2]
+044670 T0002 VOTE S1 Received AppendEntries RPC, from S2,
+044671 T0002 LOG1 S1 Reset Election Timer
+044673 T0002 VOTE S0 Received AppendEntries RPC, from S2,
+044673 T0002 LOG1 S0 Reset Election Timer
+048278 T0002 VOTE S1 Follower->Candidate, For T2
+048279 T0002 LOG1 S1 Reset Election Timer
+048279 T0003 DBUG S1 start election
+049724 T0002 VOTE S0 Follower->Candidate, For T2
+049725 T0002 LOG1 S0 Reset Election Timer
+049725 T0003 DBUG S0 start election
+052738 T0003 VOTE S1 Candidate->Candidate, For T3
+052739 T0003 LOG1 S1 Reset Election Timer
+052739 T0004 DBUG S1 start election
+052932 T0004 LOG1 S1 -> S2, Lost or crashed
+054099 T0004 LOG1 S1 -> S0, Lost or crashed
+054888 T0003 VOTE S0 Candidate->Candidate, For T3
+054889 T0003 LOG1 S0 Reset Election Timer
+054890 T0004 DBUG S0 start election
+055235 T0002 LOG1 S2 -> S1, Lost or crashed
+055996 T0004 DBUG S1 Ask vote from S0, lost or error
+056756 T0004 VOTE S1 Candidate->Candidate, For T4
+056756 T0004 LOG1 S1 Reset Election Timer
+056756 T0005 DBUG S1 start election
+060327 T0004 VOTE S0 Candidate->Candidate, For T4
+060328 T0004 LOG1 S0 Reset Election Timer
+060328 T0005 DBUG S0 start election
+060819 T0002 LOG1 S2 -> S1, Lost or crashed
+061226 T0005 VOTE S1 Candidate->Candidate, For T5
+061227 T0005 LOG1 S1 Reset Election Timer
+061227 T0006 DBUG S1 start election
+061440 T0006 DBUG S1 Ask vote from S0, lost or error
+064796 T0006 VOTE S1 Candidate->Candidate, For T6
+064796 T0006 LOG1 S1 Reset Election Timer
+064797 T0007 DBUG S1 start election
+064805 T0005 VOTE S0 Candidate->Candidate, For T5
+064805 T0005 LOG1 S0 Reset Election Timer
+064805 T0006 DBUG S0 start election
+064950 T0002 LOG1 S2 -> S0, Lost or crashed
+066982 T0002 LOG1 S2 -> S1, Lost or crashed
+067472 T0002 LOG1 S2 -> S0, Lost or crashed
+069564 T0006 VOTE S0 Candidate->Candidate, For T6
+069565 T0006 LOG1 S0 Reset Election Timer
+069565 T0007 DBUG S0 start election
+069570 T0007 VOTE S1 Received RequestVote RPC, from S0,
+069570 T0007 VOTE S1 -> S0, Reject, Already voted to S1
+069783 T0007 VOTE S1 Candidate->Candidate, For T7
+069783 T0007 LOG1 S1 Reset Election Timer
+069783 T0008 DBUG S1 start election
+069786 T0007 VOTE S0 Received RequestVote RPC, from S1,
+069787 T0007 LOG1 S0 Candidate -> Follower, T7 -> T8
+069787 T0008 LOG1 S0 Reset Election Timer
+069787 T0008 VOTE S0 -> S1, vote granted
+069787 T0008 VOTE S1 Vote from S0, total votes 2
+069787 T0008 LEAD S1 Candidate Become leader in T8
+069789 T0008 VOTE S0 Received AppendEntries RPC, from S1,
+069789 T0008 LOG1 S0 Reset Election Timer
+070796 T0002 LOG1 S2 -> S0, Lost or crashed
+071198 T0008 DBUG S0 Ask vote from S1, lost or error
+071803 T0002 VOTE S2 Received AppendEntries RPC, from S1,
+071804 T0002 LOG1 S2 AppendEntries Handler: Become follower
+071804 T0002 LOG1 S2 Leader -> Follower, T2 -> T8
+071804 T0008 LOG1 S2 Reset Election Timer
+071805 T0008 VOTE S0 Received AppendEntries RPC, from S1,
+071805 T0008 LOG1 S0 Reset Election Timer
+072858 T0008 LOG1 S2 Lost leader[2] to Follower[T8]
+073805 T0008 VOTE S2 Received AppendEntries RPC, from S1,
+073806 T0008 LOG1 S2 Reset Election Timer
+073807 T0008 VOTE S0 Received AppendEntries RPC, from S1,
+073807 T0008 LOG1 S0 Reset Election Timer
+073942 T0008 DBUG S0 Ask vote from S1, lost or error
+075590 T0008 LOG1 S2 -> S1, Lost or crashed
+075657 T0008 LOG1 S1 -> S0, Lost or crashed
+075811 T0008 VOTE S0 Received AppendEntries RPC, from S1,
+075811 T0008 LOG1 S0 Reset Election Timer
+075811 T0008 VOTE S2 Received AppendEntries RPC, from S1,
+075812 T0008 LOG1 S2 Reset Election Timer
+  ... Passed --   4.6  3   82    6676    0
+076220 T0000 DBUG S0 Make
+076220 T0000 VOTE S0 Follower->Candidate, For T0
+076220 T0000 LOG1 S0 Reset Election Timer
+076220 T0001 DBUG S0 start election
+076220 T0000 DBUG S1 Make
+076220 T0000 DBUG S2 Make
+076221 T0000 DBUG S3 Make
+076221 T0000 VOTE S2 Follower->Candidate, For T0
+076221 T0000 VOTE S1 Follower->Candidate, For T0
+076221 T0000 VOTE S3 Follower->Candidate, For T0
+076221 T0000 LOG1 S2 Reset Election Timer
+076221 T0000 DBUG S4 Make
+076221 T0000 LOG1 S3 Reset Election Timer
+076221 T0001 DBUG S2 start election
+076221 T0000 LOG1 S1 Reset Election Timer
+076221 T0000 DBUG S5 Make
+076221 T0001 DBUG S3 start election
+076221 T0001 DBUG S1 start election
+076222 T0000 DBUG S6 Make
+Test (3A): multiple elections ...
+076222 T0000 VOTE S4 Follower->Candidate, For T0
+076222 T0000 LOG1 S4 Reset Election Timer
+076222 T0001 DBUG S4 start election
+076222 T0000 VOTE S5 Follower->Candidate, For T0
+076222 T0000 LOG1 S5 Reset Election Timer
+076222 T0001 DBUG S5 start election
+076223 T0001 VOTE S4 Received RequestVote RPC, from S2,
+076223 T0001 VOTE S4 -> S2, Reject, Already voted to S4
+076223 T0001 VOTE S0 Received RequestVote RPC, from S1,
+076223 T0001 VOTE S0 -> S1, Reject, Already voted to S0
+076223 T0001 VOTE S2 Received RequestVote RPC, from S3,
+076223 T0001 VOTE S2 -> S3, Reject, Already voted to S2
+076223 T0001 VOTE S0 Received RequestVote RPC, from S5,
+076224 T0001 VOTE S0 -> S5, Reject, Already voted to S0
+076224 T0001 VOTE S0 Received RequestVote RPC, from S4,
+076224 T0001 VOTE S0 -> S4, Reject, Already voted to S0
+076224 T0001 VOTE S2 Received RequestVote RPC, from S5,
+076224 T0001 VOTE S2 -> S5, Reject, Already voted to S2
+076224 T0001 VOTE S5 Received RequestVote RPC, from S3,
+076224 T0001 VOTE S5 -> S3, Reject, Already voted to S5
+076225 T0001 VOTE S2 Received RequestVote RPC, from S1,
+076225 T0001 VOTE S2 -> S1, Reject, Already voted to S2
+076225 T0001 VOTE S3 Received RequestVote RPC, from S5,
+076225 T0001 VOTE S3 -> S5, Reject, Already voted to S3
+076225 T0001 VOTE S5 Received RequestVote RPC, from S2,
+076225 T0001 VOTE S5 -> S2, Reject, Already voted to S5
+076226 T0001 VOTE S3 Received RequestVote RPC, from S1,
+076226 T0001 VOTE S3 -> S1, Reject, Already voted to S3
+076226 T0001 VOTE S2 Received RequestVote RPC, from S4,
+076226 T0001 VOTE S2 -> S4, Reject, Already voted to S2
+076226 T0001 VOTE S4 Received RequestVote RPC, from S5,
+076226 T0001 VOTE S4 -> S5, Reject, Already voted to S4
+076226 T0001 VOTE S0 Received RequestVote RPC, from S2,
+076226 T0001 VOTE S0 -> S2, Reject, Already voted to S0
+076227 T0001 VOTE S3 Received RequestVote RPC, from S2,
+076227 T0001 VOTE S3 -> S2, Reject, Already voted to S3
+076227 T0001 VOTE S3 Received RequestVote RPC, from S4,
+076227 T0001 VOTE S4 Received RequestVote RPC, from S1,
+076227 T0001 VOTE S4 -> S1, Reject, Already voted to S4
+076224 T0001 VOTE S1 Received RequestVote RPC, from S5,
+076227 T0001 VOTE S1 -> S5, Reject, Already voted to S1
+076227 T0001 VOTE S3 -> S4, Reject, Already voted to S3
+076228 T0001 VOTE S1 Received RequestVote RPC, from S3,
+076228 T0001 VOTE S1 -> S3, Reject, Already voted to S1
+076228 T0001 VOTE S5 Received RequestVote RPC, from S4,
+076228 T0001 VOTE S5 -> S4, Reject, Already voted to S5
+076223 T0000 VOTE S6 Received RequestVote RPC, from S5,
+076228 T0000 LOG1 S6 Follower -> Follower, T0 -> T1
+076228 T0001 LOG1 S6 Reset Election Timer
+076228 T0001 VOTE S6 -> S5, vote granted
+076228 T0001 VOTE S1 Received RequestVote RPC, from S4,
+076228 T0001 VOTE S1 -> S4, Reject, Already voted to S1
+076228 T0001 VOTE S5 Received RequestVote RPC, from S1,
+076228 T0001 VOTE S5 -> S1, Reject, Already voted to S5
+076228 T0001 VOTE S6 Received RequestVote RPC, from S4,
+076228 T0001 VOTE S6 -> S4, Reject, Already voted to S5
+076228 T0001 VOTE S1 Received RequestVote RPC, from S2,
+076228 T0001 VOTE S1 -> S2, Reject, Already voted to S1
+076228 T0001 VOTE S6 Received RequestVote RPC, from S2,
+076228 T0001 VOTE S6 -> S2, Reject, Already voted to S5
+076228 T0001 VOTE S5 Vote from S6, total votes 2
+076228 T0001 VOTE S6 Received RequestVote RPC, from S1,
+076228 T0001 VOTE S6 -> S1, Reject, Already voted to S5
+076469 T0008 DBUG S1 Ask vote from S2, lost or error
+076574 T0008 LOG1 S2 -> S0, Lost or crashed
+077309 T0001 DBUG S0 Ask vote from S5, lost or error
+077418 T0008 LOG1 S1 -> S2, Lost or crashed
+077736 T0008 LOG1 S1 -> S0, Lost or crashed
+079003 T0008 LOG1 S2 -> S1, Lost or crashed
+079019 T0008 LOG1 S2 -> S0, Lost or crashed
+079915 T0001 VOTE S5 Candidate->Candidate, For T1
+079915 T0001 LOG1 S5 Reset Election Timer
+079915 T0002 DBUG S5 start election
+079917 T0001 VOTE S6 Received RequestVote RPC, from S5,
+079917 T0001 LOG1 S6 Follower -> Follower, T1 -> T2
+079917 T0002 LOG1 S6 Reset Election Timer
+079917 T0002 VOTE S6 -> S5, vote granted
+079917 T0001 VOTE S0 Received RequestVote RPC, from S5,
+079917 T0001 LOG1 S0 Candidate -> Follower, T1 -> T2
+079917 T0002 LOG1 S0 Reset Election Timer
+079917 T0001 VOTE S3 Received RequestVote RPC, from S5,
+079917 T0001 VOTE S1 Received RequestVote RPC, from S5,
+079918 T0001 LOG1 S3 Candidate -> Follower, T1 -> T2
+079918 T0002 LOG1 S3 Reset Election Timer
+079918 T0002 VOTE S3 -> S5, vote granted
+079918 T0002 VOTE S0 -> S5, vote granted
+079918 T0001 VOTE S2 Received RequestVote RPC, from S5,
+079918 T0001 LOG1 S2 Candidate -> Follower, T1 -> T2
+079918 T0002 LOG1 S2 Reset Election Timer
+079918 T0002 VOTE S2 -> S5, vote granted
+079918 T0002 VOTE S5 Vote from S6, total votes 2
+079918 T0002 VOTE S5 Vote from S0, total votes 3
+079918 T0001 VOTE S4 Received RequestVote RPC, from S5,
+079918 T0001 LOG1 S4 Candidate -> Follower, T1 -> T2
+079918 T0002 VOTE S5 Vote from S2, total votes 4
+079918 T0002 LEAD S5 Candidate Become leader in T2
+079919 T0002 VOTE S5 Lost Context, abort RequestVoteReply from S3
+079919 T0002 LOG1 S4 Reset Election Timer
+079919 T0002 VOTE S4 -> S5, vote granted
+079918 T0001 LOG1 S1 Candidate -> Follower, T1 -> T2
+079919 T0002 LOG1 S1 Reset Election Timer
+079919 T0002 VOTE S1 -> S5, vote granted
+079919 T0002 VOTE S6 Received AppendEntries RPC, from S5,
+079919 T0002 LOG1 S6 Reset Election Timer
+079919 T0002 VOTE S2 Received AppendEntries RPC, from S5,
+079919 T0002 LOG1 S2 Reset Election Timer
+079919 T0002 VOTE S5 Lost Context, abort RequestVoteReply from S4
+079920 T0002 VOTE S5 Lost Context, abort RequestVoteReply from S1
+079920 T0002 VOTE S3 Received AppendEntries RPC, from S5,
+079920 T0002 LOG1 S3 Reset Election Timer
+079920 T0002 VOTE S4 Received AppendEntries RPC, from S5,
+079920 T0002 LOG1 S4 Reset Election Timer
+079920 T0002 VOTE S0 Received AppendEntries RPC, from S5,
+079920 T0002 LOG1 S0 Reset Election Timer
+079920 T0002 VOTE S1 Received AppendEntries RPC, from S5,
+079920 T0002 LOG1 S1 Reset Election Timer
+081934 T0002 VOTE S3 Received AppendEntries RPC, from S5,
+081935 T0002 LOG1 S3 Reset Election Timer
+081934 T0002 VOTE S6 Received AppendEntries RPC, from S5,
+081936 T0002 LOG1 S6 Reset Election Timer
+081937 T0002 VOTE S2 Received AppendEntries RPC, from S5,
+081937 T0002 LOG1 S2 Reset Election Timer
+081992 T0002 DBUG S0 Ask vote from S1, lost or error
+082892 T0008 LOG1 S2 -> S1, Lost or crashed
+083535 T0002 VOTE S4 Follower->Candidate, For T2
+083535 T0002 LOG1 S4 Reset Election Timer
+083536 T0003 DBUG S4 start election
+083942 T0002 VOTE S3 Received AppendEntries RPC, from S5,
+083943 T0002 LOG1 S3 Reset Election Timer
+083942 T0002 VOTE S2 Received AppendEntries RPC, from S5,
+083943 T0002 LOG1 S2 Reset Election Timer
+083942 T0002 VOTE S6 Received AppendEntries RPC, from S5,
+083943 T0002 LOG1 S6 Reset Election Timer
+084654 T0008 LOG1 S2 -> S0, Lost or crashed
+084997 T0008 DBUG S1 Ask vote from S0, lost or error
+085569 T0002 VOTE S1 Follower->Candidate, For T2
+085573 T0002 LOG1 S1 Reset Election Timer
+085573 T0003 DBUG S1 start election
+085648 T0002 VOTE S0 Follower->Candidate, For T2
+085648 T0002 LOG1 S0 Reset Election Timer
+085648 T0003 DBUG S0 start election
+085956 T0002 VOTE S2 Received AppendEntries RPC, from S5,
+085956 T0002 VOTE S3 Received AppendEntries RPC, from S5,
+085957 T0002 LOG1 S2 Reset Election Timer
+085958 T0002 VOTE S6 Received AppendEntries RPC, from S5,
+085958 T0002 LOG1 S6 Reset Election Timer
+085957 T0002 LOG1 S3 Reset Election Timer
+086895 T0008 LOG1 S2 -> S0, Lost or crashed
+087589 T0003 VOTE S4 Candidate->Candidate, For T3
+087590 T0003 LOG1 S4 Reset Election Timer
+087590 T0004 DBUG S4 start election
+087593 T0002 VOTE S6 Received RequestVote RPC, from S4,
+087593 T0002 LOG1 S6 Follower -> Follower, T2 -> T4
+087593 T0004 LOG1 S6 Reset Election Timer
+087593 T0004 VOTE S6 -> S4, vote granted
+087594 T0004 VOTE S4 Vote from S6, total votes 2
+087595 T0003 VOTE S0 Received RequestVote RPC, from S4,
+087595 T0003 LOG1 S0 Candidate -> Follower, T3 -> T4
+087595 T0004 LOG1 S0 Reset Election Timer
+087595 T0004 VOTE S0 -> S4, vote granted
+087595 T0004 VOTE S4 Vote from S0, total votes 3
+087596 T0002 VOTE S3 Received RequestVote RPC, from S4,
+087596 T0002 LOG1 S3 Follower -> Follower, T2 -> T4
+087597 T0004 LOG1 S3 Reset Election Timer
+087597 T0004 VOTE S3 -> S4, vote granted
+087597 T0004 VOTE S4 Vote from S3, total votes 4
+087597 T0004 LEAD S4 Candidate Become leader in T4
+087598 T0004 VOTE S6 Received AppendEntries RPC, from S4,
+087598 T0004 LOG1 S6 Reset Election Timer
+087601 T0004 VOTE S0 Received AppendEntries RPC, from S4,
+087602 T0004 LOG1 S0 Reset Election Timer
+087607 T0004 VOTE S3 Received AppendEntries RPC, from S4,
+087607 T0004 LOG1 S3 Reset Election Timer
+087910 T0008 LOG1 S2 -> S1, Lost or crashed
+089268 T0002 VOTE S2 Follower->Candidate, For T2
+089270 T0002 LOG1 S2 Reset Election Timer
+089270 T0003 DBUG S2 start election
+089619 T0004 VOTE S6 Received AppendEntries RPC, from S4,
+089620 T0004 LOG1 S6 Reset Election Timer
+089621 T0004 VOTE S3 Received AppendEntries RPC, from S4,
+089621 T0004 LOG1 S3 Reset Election Timer
+089623 T0004 VOTE S0 Received AppendEntries RPC, from S4,
+089623 T0004 LOG1 S0 Reset Election Timer
+089796 T0003 VOTE S1 Candidate->Candidate, For T3
+089797 T0003 LOG1 S1 Reset Election Timer
+089797 T0004 DBUG S1 start election
+090035 T0002 LOG1 S5 -> S6, Lost or crashed
+090157 T0008 LOG1 S1 -> S2, Lost or crashed
+090266 T0004 DBUG S4 Ask vote from S2, lost or error
+090449 T0004 DBUG S4 Ask vote from S5, lost or error
+091406 T0003 DBUG S2 Ask vote from S4, lost or error
+091623 T0004 VOTE S0 Received AppendEntries RPC, from S4,
+091623 T0004 VOTE S6 Received AppendEntries RPC, from S4,
+091623 T0004 VOTE S3 Received AppendEntries RPC, from S4,
+091623 T0004 LOG1 S3 Reset Election Timer
+091623 T0004 LOG1 S6 Reset Election Timer
+091623 T0004 LOG1 S0 Reset Election Timer
+092460 T0008 DBUG S1 Ask vote from S2, lost or error
+093234 T0004 VOTE S1 Candidate->Candidate, For T4
+093236 T0004 LOG1 S1 Reset Election Timer
+093236 T0005 DBUG S1 start election
+093570 T0008 DBUG S0 Ask vote from S2, lost or error
+093624 T0004 VOTE S6 Received AppendEntries RPC, from S4,
+093624 T0004 LOG1 S6 Reset Election Timer
+093626 T0004 VOTE S0 Received AppendEntries RPC, from S4,
+093626 T0004 LOG1 S0 Reset Election Timer
+093627 T0004 VOTE S3 Received AppendEntries RPC, from S4,
+093627 T0004 LOG1 S3 Reset Election Timer
+094153 T0005 DBUG S1 Ask vote from S4, lost or error
+094232 T0002 LOG1 S5 -> S1, Lost or crashed
+094828 T0003 VOTE S2 Candidate->Candidate, For T3
+094829 T0003 LOG1 S2 Reset Election Timer
+094829 T0004 DBUG S2 start election
+095131 T0008 DBUG S0 Ask vote from S2, lost or error
+095593 T0008 DBUG S1 Ask vote from S2, lost or error
+095639 T0004 VOTE S6 Received AppendEntries RPC, from S4,
+095640 T0004 LOG1 S6 Reset Election Timer
+095643 T0004 VOTE S0 Received AppendEntries RPC, from S4,
+095644 T0004 LOG1 S0 Reset Election Timer
+095646 T0004 VOTE S3 Received AppendEntries RPC, from S4,
+095646 T0004 LOG1 S3 Reset Election Timer
+096337 T0005 DBUG S1 Ask vote from S5, lost or error
+096407 T0008 DBUG S0 Ask vote from S1, lost or error
+097632 T0004 VOTE S6 Received AppendEntries RPC, from S4,
+097633 T0004 LOG1 S6 Reset Election Timer
+097635 T0005 VOTE S1 Received AppendEntries RPC, from S4,
+097635 T0005 LOG2 S1 <-4, Reject append log, higher term T4 < T5
+097636 T0004 LOG1 S4 Leader -> Follower, T4 -> T5
+097637 T0004 VOTE S2 Received AppendEntries RPC, from S4,
+097637 T0004 LOG1 S2 Reset Election Timer
+097657 T0004 VOTE S3 Received AppendEntries RPC, from S4,
+097657 T0004 LOG1 S3 Reset Election Timer
+097824 T0005 VOTE S1 Candidate->Candidate, For T5
+097825 T0005 LOG1 S1 Reset Election Timer
+097825 T0006 DBUG S1 start election
+097828 T0004 VOTE S6 Received RequestVote RPC, from S1,
+097828 T0004 LOG1 S6 Follower -> Follower, T4 -> T6
+097828 T0006 LOG1 S6 Reset Election Timer
+097828 T0006 VOTE S6 -> S1, vote granted
+097829 T0006 VOTE S1 Vote from S6, total votes 2
+097830 T0004 VOTE S2 Received RequestVote RPC, from S1,
+097830 T0004 LOG1 S2 Candidate -> Follower, T4 -> T6
+097830 T0006 LOG1 S2 Reset Election Timer
+097830 T0006 VOTE S2 -> S1, vote granted
+097830 T0006 VOTE S1 Vote from S2, total votes 3
+097831 T0004 VOTE S3 Received RequestVote RPC, from S1,
+097831 T0004 LOG1 S3 Follower -> Follower, T4 -> T6
+097831 T0006 LOG1 S3 Reset Election Timer
+097831 T0006 VOTE S3 -> S1, vote granted
+097832 T0006 VOTE S1 Vote from S3, total votes 4
+097832 T0006 LEAD S1 Candidate Become leader in T6
+097833 T0006 VOTE S6 Received AppendEntries RPC, from S1,
+097833 T0006 LOG1 S6 Reset Election Timer
+097834 T0005 VOTE S4 Received RequestVote RPC, from S1,
+097834 T0005 LOG1 S4 Follower -> Follower, T5 -> T6
+097834 T0006 LOG1 S4 Reset Election Timer
+097834 T0006 VOTE S4 -> S1, vote granted
+097886 T0006 VOTE S1 Lost Context, abort RequestVoteReply from S4
+097897 T0006 VOTE S2 Received AppendEntries RPC, from S1,
+097898 T0006 LOG1 S2 Reset Election Timer
+097900 T0006 VOTE S3 Received AppendEntries RPC, from S1,
+097900 T0006 LOG1 S3 Reset Election Timer
+097904 T0006 VOTE S4 Received AppendEntries RPC, from S1,
+097904 T0006 LOG1 S4 Reset Election Timer
+098621 T0006 DBUG S2 Ask vote from S3, lost or error
+098986 T0004 VOTE S0 Follower->Candidate, For T4
+098986 T0004 LOG1 S0 Reset Election Timer
+098986 T0005 DBUG S0 start election
+099637 T0006 LOG1 S4 Lost leader[4] to Follower[T6]
+099871 T0006 VOTE S6 Received AppendEntries RPC, from S1,
+099927 T0006 LOG1 S6 Reset Election Timer
+099931 T0006 VOTE S2 Received AppendEntries RPC, from S1,
+099931 T0006 LOG1 S2 Reset Election Timer
+099931 T0006 VOTE S3 Received AppendEntries RPC, from S1,
+099931 T0006 LOG1 S3 Reset Election Timer
+099931 T0006 VOTE S4 Received AppendEntries RPC, from S1,
+099931 T0006 LOG1 S4 Reset Election Timer
+099994 T0006 DBUG S1 Ask vote from S5, lost or error
+100739 T0005 DBUG S0 Ask vote from S3, lost or error
+100773 T0008 LOG1 S2 -> S1, Lost or crashed
+100899 T0002 LOG1 S5 -> S4, Lost or crashed
+101066 T0006 DBUG S4 Ask vote from S0, lost or error
+101528 T0006 DBUG S1 Ask vote from S6, lost or error
+101769 T0006 DBUG S1 Ask vote from S2, lost or error
+101872 T0002 VOTE S5 Received AppendEntries RPC, from S1,
+101872 T0002 LOG1 S5 AppendEntries Handler: Become follower
+101872 T0002 LOG1 S5 Leader -> Follower, T2 -> T6
+101872 T0006 LOG1 S5 Reset Election Timer
+101872 T0006 VOTE S2 Received AppendEntries RPC, from S1,
+101872 T0006 LOG1 S2 Reset Election Timer
+101872 T0006 VOTE S3 Received AppendEntries RPC, from S1,
+101872 T0006 LOG1 S3 Reset Election Timer
+101872 T0006 VOTE S4 Received AppendEntries RPC, from S1,
+101872 T0006 LOG1 S4 Reset Election Timer
+102070 T0006 LOG1 S5 Lost leader[2] to Follower[T6]
+102073 T0006 LOG1 S5 -> S2, Lost or crashed
+102088 T0008 LOG1 S2 -> S1, Lost or crashed
+102172 T0008 DBUG S0 Ask vote from S1, lost or error
+102380 T0005 DBUG S0 Ask vote from S6, lost or error
+102548 T0005 DBUG S0 Ask vote from S1, lost or error
+102727 T0008 LOG1 S2 -> S0, Lost or crashed
+103326 T0008 DBUG S0 Ask vote from S2, lost or error
+103425 T0006 DBUG S2 Ask vote from S3, lost or error
+103521 T0006 DBUG S2 Ask vote from S6, lost or error
+103855 T0006 DBUG S1 Ask vote from S2, lost or error
+103856 T0006 LOG1 S5 -> S2, Lost or crashed
+103857 T0005 DBUG S0 Ask vote from S3, lost or error
+103873 T0006 VOTE S4 Received AppendEntries RPC, from S1,
+103873 T0006 LOG1 S4 Reset Election Timer
+103873 T0006 VOTE S2 Received AppendEntries RPC, from S1,
+103873 T0006 LOG1 S2 Reset Election Timer
+103873 T0006 VOTE S3 Received AppendEntries RPC, from S1,
+103873 T0006 LOG1 S3 Reset Election Timer
+103873 T0006 VOTE S5 Received AppendEntries RPC, from S1,
+103873 T0006 LOG1 S5 Reset Election Timer
+103904 T0006 DBUG S2 Ask vote from S1, lost or error
+104121 T0006 VOTE S6 Follower->Candidate, For T6
+104121 T0006 LOG1 S6 Reset Election Timer
+104121 T0007 DBUG S6 start election
+104380 T0005 VOTE S0 Candidate->Candidate, For T5
+104381 T0005 LOG1 S0 Reset Election Timer
+104381 T0006 DBUG S0 start election
+105527 T0006 LOG1 S5 -> S6, Lost or crashed
+105728 T0006 LOG1 S1 -> S0, Lost or crashed
+105796 T0006 LOG1 S5 -> S0, Lost or crashed
+105879 T0006 VOTE S3 Received AppendEntries RPC, from S1,
+105879 T0006 VOTE S2 Received AppendEntries RPC, from S1,
+105879 T0006 LOG1 S2 Reset Election Timer
+105879 T0006 VOTE S5 Received AppendEntries RPC, from S1,
+105880 T0006 LOG1 S5 Reset Election Timer
+105879 T0006 VOTE S4 Received AppendEntries RPC, from S1,
+105881 T0006 LOG1 S4 Reset Election Timer
+105880 T0006 LOG1 S3 Reset Election Timer
+105978 T0006 LOG1 S4 -> S5, Lost or crashed
+106039 T0008 LOG1 S2 -> S1, Lost or crashed
+106406 T0006 LOG1 S5 -> S3, Lost or crashed
+107504 T0006 LOG1 S5 -> S1, Lost or crashed
+107592 T0006 LOG1 S1 -> S5, Lost or crashed
+108283 T0006 VOTE S0 Candidate->Candidate, For T6
+108284 T0006 LOG1 S0 Reset Election Timer
+108284 T0007 DBUG S0 start election
+108287 T0007 VOTE S6 Received RequestVote RPC, from S0,
+108288 T0007 VOTE S6 -> S0, Reject, Already voted to S6
+108290 T0008 DBUG S1 Ask vote from S2, lost or error
+108292 T0006 VOTE S3 Received RequestVote RPC, from S0,
+108292 T0006 VOTE S4 Received RequestVote RPC, from S0,
+108292 T0006 LOG1 S3 Follower -> Follower, T6 -> T7
+108292 T0006 LOG1 S4 Follower -> Follower, T6 -> T7
+108292 T0007 LOG1 S4 Reset Election Timer
+108293 T0007 VOTE S4 -> S0, vote granted
+108292 T0007 LOG1 S3 Reset Election Timer
+108294 T0007 VOTE S3 -> S0, vote granted
+108294 T0007 VOTE S0 Vote from S4, total votes 2
+108295 T0007 VOTE S0 Vote from S3, total votes 3
+109299 T0006 LOG1 S5 -> S4, Lost or crashed
+109461 T0008 DBUG S1 Ask vote from S2, lost or error
+109739 T0007 VOTE S6 Candidate->Candidate, For T7
+109740 T0007 LOG1 S6 Reset Election Timer
+109740 T0008 DBUG S6 start election
+109745 T0007 VOTE S0 Received RequestVote RPC, from S6,
+109745 T0007 LOG1 S0 Candidate -> Follower, T7 -> T8
+109745 T0008 LOG1 S0 Reset Election Timer
+109745 T0008 VOTE S0 -> S6, vote granted
+109749 T0008 VOTE S6 Vote from S0, total votes 2
+109752 T0007 VOTE S3 Received RequestVote RPC, from S6,
+109752 T0007 LOG1 S3 Follower -> Follower, T7 -> T8
+109752 T0008 LOG1 S3 Reset Election Timer
+109752 T0008 VOTE S3 -> S6, vote granted
+109752 T0008 VOTE S6 Vote from S3, total votes 3
+109768 T0007 VOTE S4 Received RequestVote RPC, from S6,
+109768 T0007 LOG1 S4 Follower -> Follower, T7 -> T8
+109768 T0008 LOG1 S4 Reset Election Timer
+109768 T0008 VOTE S4 -> S6, vote granted
+109769 T0008 VOTE S6 Vote from S4, total votes 4
+109769 T0008 LEAD S6 Candidate Become leader in T8
+109771 T0008 VOTE S0 Received AppendEntries RPC, from S6,
+109771 T0008 LOG1 S0 Reset Election Timer
+109773 T0008 VOTE S3 Received AppendEntries RPC, from S6,
+109773 T0008 LOG1 S3 Reset Election Timer
+109773 T0008 VOTE S4 Received AppendEntries RPC, from S6,
+109775 T0008 LOG1 S4 Reset Election Timer
+110068 T0006 VOTE S2 Follower->Candidate, For T6
+110069 T0006 LOG1 S2 Reset Election Timer
+110069 T0007 DBUG S2 start election
+110081 T0007 DBUG S2 Ask vote from S6, lost or error
+110081 T0008 LOG1 S2 -> S1, Lost or crashed
+110093 T0006 LOG1 S1 -> S3, Lost or crashed
+110154 T0008 LOG1 S1 -> S2, Lost or crashed
+110435 T0007 DBUG S2 Ask vote from S0, lost or error
+110435 T0008 LOG1 S2 -> S1, Lost or crashed
+110503 T0006 VOTE S5 Follower->Candidate, For T6
+110503 T0006 LOG1 S5 Reset Election Timer
+110503 T0007 DBUG S5 start election
+110612 T0008 DBUG S0 Ask vote from S5, lost or error
+110945 T0007 DBUG S5 Ask vote from S1, lost or error
+111094 T0006 LOG1 S1 -> S0, Lost or crashed
+111263 T0006 DBUG S1 Ask vote from S5, lost or error
+111279 T0008 DBUG S4 Ask vote from S6, lost or error
+111317 T0008 LOG1 S4 -> S5, Lost or crashed
+111386 T0007 DBUG S2 Ask vote from S6, lost or error
+111587 T0007 LOG1 S5 -> S3, Lost or crashed
+111603 T0008 DBUG S0 Ask vote from S2, lost or error
+111643 T0007 LOG1 S5 -> S0, Lost or crashed
+111755 T0008 LOG1 S4 -> S1, Lost or crashed
+111773 T0008 VOTE S3 Received AppendEntries RPC, from S6,
+111773 T0006 VOTE S1 Received AppendEntries RPC, from S6,
+111774 T0006 LOG1 S1 AppendEntries Handler: Become follower
+111774 T0006 LOG1 S1 Leader -> Follower, T6 -> T8
+111774 T0007 VOTE S5 Received AppendEntries RPC, from S6,
+111774 T0007 LOG1 S5 AppendEntries Handler: Become follower
+111774 T0007 LOG1 S5 Candidate -> Follower, T7 -> T8
+111774 T0008 LOG1 S5 Reset Election Timer
+111774 T0008 LOG1 S3 Reset Election Timer
+111774 T0008 LOG1 S1 Reset Election Timer
+111773 T0008 VOTE S4 Received AppendEntries RPC, from S6,
+111775 T0008 LOG1 S4 Reset Election Timer
+111890 T0008 LOG1 S1 Lost leader[6] to Follower[T8]
+112095 T0008 LOG1 S1 -> S5, Lost or crashed
+112260 T0008 LOG1 S5 -> S1, Lost or crashed
+112452 T0008 LOG1 S2 -> S1, Lost or crashed
+113093 T0008 DBUG S0 Ask vote from S5, lost or error
+113334 T0008 LOG1 S2 -> S0, Lost or crashed
+113518 T0008 LOG1 S2 -> S1, Lost or crashed
+113713 T0008 LOG1 S6 -> S2, Lost or crashed
+113724 T0008 DBUG S6 Ask vote from S3, lost or error
+113779 T0008 VOTE S5 Received AppendEntries RPC, from S6,
+113780 T0008 LOG1 S5 Reset Election Timer
+113780 T0008 VOTE S3 Received AppendEntries RPC, from S6,
+113780 T0008 LOG1 S3 Reset Election Timer
+113779 T0008 VOTE S1 Received AppendEntries RPC, from S6,
+113780 T0008 LOG1 S1 Reset Election Timer
+113779 T0008 VOTE S4 Received AppendEntries RPC, from S6,
+113781 T0008 LOG1 S4 Reset Election Timer
+113879 T0008 VOTE S0 Follower->Candidate, For T8
+113879 T0008 LOG1 S0 Reset Election Timer
+113879 T0009 DBUG S0 start election
+113964 T0008 LOG1 S2 -> S0, Lost or crashed
+114059 T0008 LOG1 S5 -> S6, Lost or crashed
+114144 T0007 VOTE S2 Candidate->Candidate, For T7
+114145 T0007 LOG1 S2 Reset Election Timer
+114145 T0008 DBUG S2 start election
+114299 T0008 LOG1 S1 -> S0, Lost or crashed
+114434 T0008 LOG1 S5 -> S0, Lost or crashed
+115798 T0008 VOTE S5 Received AppendEntries RPC, from S6,
+115799 T0008 LOG1 S5 Reset Election Timer
+115802 T0008 VOTE S1 Received AppendEntries RPC, from S6,
+115802 T0008 LOG1 S1 Reset Election Timer
+115805 T0008 VOTE S3 Received AppendEntries RPC, from S6,
+115805 T0008 LOG1 S3 Reset Election Timer
+115806 T0008 VOTE S4 Received AppendEntries RPC, from S6,
+115806 T0008 LOG1 S4 Reset Election Timer
+116086 T0008 DBUG S0 Ask vote from S2, lost or error
+116307 T0009 DBUG S0 Ask vote from S2, lost or error
+116381 T0008 DBUG S1 Ask vote from S2, lost or error
+116381 T0008 DBUG S1 Ask vote from S3, lost or error
+116500 T0008 DBUG S5 Ask vote from S2, lost or error
+116558 T0008 DBUG S3 Ask vote from S6, lost or error
+116659 T0009 DBUG S0 Ask vote from S4, lost or error
+117152 T0008 DBUG S1 Ask vote from S0, lost or error
+117237 T0008 DBUG S2 Ask vote from S0, lost or error
+117481 T0008 DBUG S1 Ask vote from S0, lost or error
+117609 T0008 VOTE S2 Candidate->Candidate, For T8
+117610 T0008 LOG1 S2 Reset Election Timer
+117610 T0009 DBUG S2 start election
+117805 T0008 LOG1 S5 -> S1, Lost or crashed
+117815 T0009 DBUG S0 Ask vote from S2, lost or error
+117995 T0009 VOTE S0 Candidate->Candidate, For T9
+117996 T0009 LOG1 S0 Reset Election Timer
+117996 T0010 DBUG S0 start election
+117999 T0008 VOTE S5 Received RequestVote RPC, from S0,
+117999 T0008 LOG1 S5 Follower -> Follower, T8 -> T10
+118000 T0010 LOG1 S5 Reset Election Timer
+118000 T0010 VOTE S5 -> S0, vote granted
+117999 T0008 VOTE S3 Received RequestVote RPC, from S0,
+118000 T0008 LOG1 S3 Follower -> Follower, T8 -> T10
+118001 T0010 LOG1 S3 Reset Election Timer
+118001 T0010 VOTE S3 -> S0, vote granted
+117999 T0008 VOTE S1 Received RequestVote RPC, from S0,
+118001 T0008 LOG1 S1 Follower -> Follower, T8 -> T10
+118001 T0010 LOG1 S1 Reset Election Timer
+118002 T0010 VOTE S1 -> S0, vote granted
+118001 T0010 VOTE S0 Vote from S5, total votes 2
+118002 T0010 VOTE S0 Vote from S3, total votes 3
+118003 T0010 VOTE S0 Vote from S1, total votes 4
+118003 T0010 LEAD S0 Candidate Become leader in T10
+118004 T0010 VOTE S1 Received AppendEntries RPC, from S0,
+118004 T0010 LOG1 S1 Reset Election Timer
+118005 T0010 VOTE S5 Received AppendEntries RPC, from S0,
+118005 T0010 LOG1 S5 Reset Election Timer
+118006 T0010 VOTE S3 Received AppendEntries RPC, from S0,
+118006 T0010 LOG1 S3 Reset Election Timer
+118101 T0008 LOG1 S2 -> S0, Lost or crashed
+118264 T0008 LOG1 S6 -> S2, Lost or crashed
+118616 T0010 DBUG S0 Ask vote from S3, lost or error
+118874 T0008 LOG1 S2 -> S0, Lost or crashed
+118906 T0010 LOG1 S5 -> S0, Lost or crashed
+119199 T0010 DBUG S1 Ask vote from S0, lost or error
+119263 T0010 LOG1 S5 -> S0, Lost or crashed
+119450 T0010 DBUG S0 Ask vote from S3, lost or error
+120016 T0010 VOTE S1 Received AppendEntries RPC, from S0,
+120017 T0010 LOG1 S1 Reset Election Timer
+120017 T0010 VOTE S3 Received AppendEntries RPC, from S0,
+120017 T0010 LOG1 S3 Reset Election Timer
+120018 T0010 VOTE S5 Received AppendEntries RPC, from S0,
+120018 T0010 LOG1 S5 Reset Election Timer
+120491 T0010 DBUG S0 Ask vote from S4, lost or error
+120521 T0010 DBUG S1 Ask vote from S6, lost or error
+120955 T0009 VOTE S2 Candidate->Candidate, For T9
+120956 T0009 LOG1 S2 Reset Election Timer
+120956 T0010 DBUG S2 start election
+121029 T0010 DBUG S0 Ask vote from S2, lost or error
+121138 T0010 DBUG S0 Ask vote from S6, lost or error
+121309 T0008 LOG1 S6 -> S3, Lost or crashed
+121316 T0010 DBUG S1 Ask vote from S3, lost or error
+121388 T0008 VOTE S4 Follower->Candidate, For T8
+121388 T0008 LOG1 S4 Reset Election Timer
+121388 T0009 DBUG S4 start election
+121445 T0010 LOG1 S5 -> S1, Lost or crashed
+121505 T0010 DBUG S5 Ask vote from S4, lost or error
+121702 T0010 DBUG S2 Ask vote from S3, lost or error
+121821 T0010 VOTE S5 Received AppendEntries RPC, from S6,
+121821 T0010 LOG2 S5 <-6, Reject append log, higher term T8 < T10
+121821 T0010 VOTE S0 Received AppendEntries RPC, from S6,
+121822 T0010 LOG2 S0 <-6, Reject append log, higher term T8 < T10
+121821 T0010 VOTE S2 Received AppendEntries RPC, from S6,
+121822 T0010 LOG2 S2 <-6, Reject append log, higher term T8 < T10
+121822 T0008 LOG1 S6 Leader -> Follower, T8 -> T10
+122024 T0010 VOTE S6 Received AppendEntries RPC, from S0,
+122024 T0010 LOG1 S6 Reset Election Timer
+122024 T0010 VOTE S2 Received AppendEntries RPC, from S0,
+122024 T0010 LOG1 S2 Reset Election Timer
+122024 T0010 VOTE S5 Received AppendEntries RPC, from S0,
+122024 T0010 LOG1 S5 Reset Election Timer
+123041 T0010 LOG1 S1 -> S2, Lost or crashed
+123339 T0010 DBUG S1 Ask vote from S3, lost or error
+123339 T0010 LOG1 S0 -> S3, Lost or crashed
+123815 T0010 DBUG S2 Ask vote from S6, lost or error
+123819 T0010 LOG1 S6 Lost leader[8] to Follower[T10]
+123918 T0010 VOTE S3 Follower->Candidate, For T10
+123978 T0010 LOG1 S3 Reset Election Timer
+123978 T0011 DBUG S3 start election
+124031 T0010 VOTE S6 Received AppendEntries RPC, from S0,
+124031 T0010 LOG1 S6 Reset Election Timer
+124031 T0010 VOTE S5 Received AppendEntries RPC, from S0,
+124032 T0010 LOG1 S5 Reset Election Timer
+124031 T0010 VOTE S2 Received AppendEntries RPC, from S0,
+124032 T0010 LOG1 S2 Reset Election Timer
+124075 T0009 DBUG S4 Ask vote from S1, lost or error
+124164 T0010 DBUG S0 Ask vote from S1, lost or error
+124280 T0010 DBUG S2 Ask vote from S5, lost or error
+124281 T0010 VOTE S1 Follower->Candidate, For T10
+124281 T0010 LOG1 S1 Reset Election Timer
+124281 T0011 DBUG S1 start election
+124286 T0008 DBUG S1 Ask vote from S2, lost or error
+124322 T0008 DBUG S1 Ask vote from S0, lost or error
+125063 T0010 DBUG S0 Ask vote from S2, lost or error
+125300 T0011 LOG1 S1 -> S3, Lost or crashed
+125354 T0010 LOG1 S5 -> S3, Lost or crashed
+125965 T0009 VOTE S4 Candidate->Candidate, For T9
+125965 T0009 LOG1 S4 Reset Election Timer
+125966 T0010 DBUG S4 start election
+126001 T0010 LOG1 S5 -> S4, Lost or crashed
+126033 T0010 VOTE S6 Received AppendEntries RPC, from S0,
+126033 T0010 LOG1 S6 Reset Election Timer
+126034 T0010 VOTE S2 Received AppendEntries RPC, from S0,
+126034 T0010 LOG1 S2 Reset Election Timer
+126035 T0010 VOTE S5 Received AppendEntries RPC, from S0,
+126035 T0010 LOG1 S5 Reset Election Timer
+126627 T0010 DBUG S4 Ask vote from S3, lost or error
+126789 T0010 LOG1 S5 -> S6, Lost or crashed
+126953 T0010 LOG1 S5 -> S6, Lost or crashed
+126953 T0010 DBUG S2 Ask vote from S6, lost or error
+127267 T0010 LOG1 S6 -> S4, Lost or crashed
+127656 T0010 LOG1 S4 -> S1, Lost or crashed
+128042 T0011 VOTE S1 Received AppendEntries RPC, from S0,
+128042 T0011 LOG2 S1 <-0, Reject append log, higher term T10 < T11
+128042 T0010 VOTE S2 Received AppendEntries RPC, from S0,
+128042 T0010 LOG1 S2 Reset Election Timer
+128042 T0010 VOTE S4 Received AppendEntries RPC, from S0,
+128042 T0010 LOG1 S4 Reset Election Timer
+128043 T0010 LOG1 S0 Leader -> Follower, T10 -> T11
+128042 T0010 VOTE S6 Received AppendEntries RPC, from S0,
+128043 T0010 VOTE S5 Received AppendEntries RPC, from S0,
+128043 T0010 LOG1 S5 Reset Election Timer
+128042 T0011 VOTE S3 Received AppendEntries RPC, from S0,
+128043 T0011 LOG2 S3 <-0, Reject append log, higher term T10 < T11
+128043 T0010 LOG1 S6 Reset Election Timer
+128505 T0010 DBUG S2 Ask vote from S1, lost or error
+128783 T0010 LOG1 S5 -> S4, Lost or crashed
+129132 T0011 LOG1 S1 -> S6, Lost or crashed
+129154 T0011 VOTE S1 Candidate->Candidate, For T11
+129154 T0011 LOG1 S1 Reset Election Timer
+129155 T0012 DBUG S1 start election
+129157 T0010 VOTE S2 Received RequestVote RPC, from S1,
+129157 T0010 LOG1 S2 Candidate -> Follower, T10 -> T12
+129157 T0012 LOG1 S2 Reset Election Timer
+129157 T0012 VOTE S2 -> S1, vote granted
+129158 T0010 VOTE S6 Received RequestVote RPC, from S1,
+129158 T0010 LOG1 S6 Follower -> Follower, T10 -> T12
+129158 T0012 LOG1 S6 Reset Election Timer
+129158 T0012 VOTE S6 -> S1, vote granted
+129158 T0011 VOTE S0 Received RequestVote RPC, from S1,
+129158 T0011 LOG1 S0 Follower -> Follower, T11 -> T12
+129158 T0012 LOG1 S0 Reset Election Timer
+129158 T0012 VOTE S0 -> S1, vote granted
+129158 T0012 VOTE S1 Vote from S2, total votes 2
+129157 T0010 VOTE S4 Received RequestVote RPC, from S1,
+129159 T0012 VOTE S1 Vote from S6, total votes 3
+129159 T0010 LOG1 S4 Candidate -> Follower, T10 -> T12
+129159 T0012 LOG1 S4 Reset Election Timer
+129159 T0012 VOTE S4 -> S1, vote granted
+129159 T0012 VOTE S1 Vote from S0, total votes 4
+129159 T0012 LEAD S1 Candidate Become leader in T12
+129158 T0010 VOTE S5 Received RequestVote RPC, from S1,
+129159 T0010 LOG1 S5 Follower -> Follower, T10 -> T12
+129159 T0012 LOG1 S5 Reset Election Timer
+129159 T0012 VOTE S5 -> S1, vote granted
+129159 T0012 VOTE S1 Lost Context, abort RequestVoteReply from S4
+129160 T0012 VOTE S1 Lost Context, abort RequestVoteReply from S5
+129160 T0012 VOTE S6 Received AppendEntries RPC, from S1,
+129160 T0012 LOG1 S6 Reset Election Timer
+129157 T0011 VOTE S3 Received RequestVote RPC, from S1,
+129160 T0011 LOG1 S3 Candidate -> Follower, T11 -> T12
+129160 T0012 LOG1 S3 Reset Election Timer
+129160 T0012 VOTE S3 -> S1, vote granted
+129161 T0012 VOTE S3 Received AppendEntries RPC, from S1,
+129161 T0012 LOG1 S3 Reset Election Timer
+129160 T0012 VOTE S4 Received AppendEntries RPC, from S1,
+129161 T0012 LOG1 S4 Reset Election Timer
+129161 T0012 VOTE S1 Lost Context, abort RequestVoteReply from S3
+129160 T0012 VOTE S5 Received AppendEntries RPC, from S1,
+129161 T0012 LOG1 S5 Reset Election Timer
+129162 T0012 VOTE S0 Received AppendEntries RPC, from S1,
+129162 T0012 LOG1 S0 Reset Election Timer
+129161 T0012 VOTE S2 Received AppendEntries RPC, from S1,
+129162 T0012 LOG1 S2 Reset Election Timer
+129182 T0012 DBUG S4 Ask vote from S2, lost or error
+129185 T0008 LOG1 S2 -> S1, Lost or crashed
+129221 T0012 DBUG S1 Ask vote from S5, lost or error
+129289 T0012 LOG1 S1 -> S2, Lost or crashed
+129359 T0012 DBUG S4 Ask vote from S6, lost or error
+129903 T0012 LOG1 S4 -> S1, Lost or crashed
+130009 T0012 LOG1 S5 -> S2, Lost or crashed
+130044 T0012 LOG1 S0 Lost leader[10] to Follower[T12]
+130229 T0012 LOG1 S5 -> S1, Lost or crashed
+130490 T0012 LOG1 S6 -> S5, Lost or crashed
+130628 T0012 DBUG S1 Ask vote from S6, lost or error
+130691 T0012 LOG1 S5 -> S0, Lost or crashed
+130916 T0012 LOG1 S5 -> S0, Lost or crashed
+131090 T0012 LOG1 S6 -> S0, Lost or crashed
+131101 T0012 DBUG S0 Ask vote from S6, lost or error
+131185 T0012 LOG1 S5 -> S1, Lost or crashed
+131187 T0012 VOTE S0 Received AppendEntries RPC, from S1,
+131187 T0012 LOG1 S0 Reset Election Timer
+131187 T0012 VOTE S3 Received AppendEntries RPC, from S1,
+131187 T0012 VOTE S6 Received AppendEntries RPC, from S1,
+131187 T0012 LOG1 S6 Reset Election Timer
+131187 T0012 VOTE S2 Received AppendEntries RPC, from S1,
+131188 T0012 LOG1 S2 Reset Election Timer
+131188 T0012 VOTE S4 Received AppendEntries RPC, from S1,
+131188 T0012 LOG1 S4 Reset Election Timer
+131188 T0012 VOTE S5 Received AppendEntries RPC, from S1,
+131189 T0012 LOG1 S5 Reset Election Timer
+131187 T0012 LOG1 S3 Reset Election Timer
+131204 T0012 DBUG S3 Ask vote from S0, lost or error
+131252 T0012 DBUG S2 Ask vote from S6, lost or error
+131544 T0012 LOG1 S5 -> S0, Lost or crashed
+131755 T0012 LOG1 S5 -> S0, Lost or crashed
+131755 T0012 DBUG S5 Ask vote from S0, lost or error
+131893 T0012 DBUG S6 Ask vote from S5, lost or error
+  ... Passed --   5.6  7  423   36044    0
+PASS
+ok  	6.5840/raft	13.773s
