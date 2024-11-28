@@ -1,5 +1,5 @@
 /*
-问题是 roll back 的策略需要改进，每次只往前一个 log 太慢了
+问题是 roll back (leader accelerated log backtracking) 的策略需要改进，每次只往前一个 log 太慢了
 */
 000008 T0000 LOG1 S0 Reset Election Timer
 000012 T0001 VOTE S0 Candidate->Candidate, For T1

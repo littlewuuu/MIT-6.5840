@@ -15,8 +15,10 @@ type AppendEntriesArgs struct {
 }
 
 type AppendEntriesReply struct {
-	Term    int
-	Success bool
+	Term          int
+	Success       bool
+	ConflictIndex int
+	ConflictTerm  int
 }
 
 func (rf *Raft) sendAppendEntriesRPC(server int, args *AppendEntriesArgs, reply *AppendEntriesReply) bool {
@@ -38,7 +40,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 	// rules all servers 2
 	if args.Term > rf.currentTerm {
-		LOG(rf.me, rf.currentTerm, DLog, "AppendEntries Handler: Become follower")
+		LOG(rf.me, rf.currentTerm, DLog, "AppendEntries Handler: Higher term, become follower")
 		rf.becomeFollowerLocked(args.Term)
 	}
 
@@ -52,6 +54,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	// step 2
 	if len(rf.logs) <= args.PrevLogIndex {
 		LOG(rf.me, rf.currentTerm, DLog2, "<-%d, Reject append log, no entry at preLogIndex:%d", args.LeaderId, args.PrevLogIndex)
+		reply.ConflictIndex = len(rf.logs)
+		reply.ConflictTerm = -1
 		return
 	}
 
@@ -59,6 +63,13 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	log := rf.logs[args.PrevLogIndex]
 	if log.Term != args.PrevLogTerm {
 		LOG(rf.me, rf.currentTerm, DLog2, "<-%d, log at preLogIndex:%d has different T%d than T%d", args.LeaderId, args.PrevLogIndex, log.Term, args.PrevLogTerm)
+		reply.ConflictTerm = rf.logs[args.PrevLogIndex].Term
+		// find first log's index whose term == rf.logs[args.PrevLogIndex].Term
+		idx := args.PrevLogIndex
+		for idx > 0 && rf.logs[idx].Term == reply.ConflictTerm {
+			idx--
+		}
+		reply.ConflictIndex = idx + 1
 		return
 	}
 
@@ -95,6 +106,8 @@ func (rf *Raft) startReplication(term int) bool {
 
 		if !ok {
 			LOG(rf.me, rf.currentTerm, DLog, "-> S%d, Lost or crashed", peer)
+			// note to return
+			return
 		}
 
 		// 对齐 term
@@ -104,12 +117,23 @@ func (rf *Raft) startReplication(term int) bool {
 		}
 
 		// handle reply
-		if !reply.Success { // AppendEntries failed
-			idx := rf.nextIndex[peer] - 1
-			if idx > 0 {
-				rf.nextIndex[peer] = idx
+		if !reply.Success { // AppendEntries failed, need set nextIndex[peer]
+			oldNextIndex := rf.nextIndex[peer]
+			if reply.ConflictTerm != -1 {
+				idx := args.PrevLogIndex
+				for idx > 0 && rf.logs[idx].Term != reply.ConflictTerm {
+					idx--
+				}
+				if idx == 0 { // leader does not contain any log with term == reply.ConflictIndex
+					rf.nextIndex[peer] = reply.ConflictIndex
+				} else {
+					rf.nextIndex[peer] = idx + 1
+				}
+			} else {
+				rf.nextIndex[peer] = reply.ConflictIndex
 			}
-			LOG(rf.me, rf.currentTerm, DLog, "-> S%d failed, set nextIndex from %d to %d", peer, idx+1, rf.nextIndex[peer])
+
+			LOG(rf.me, rf.currentTerm, DLog, "-> S%d failed, set nextIndex from %d to %d", peer, oldNextIndex, rf.nextIndex[peer])
 			return
 		} else { //success
 			rf.matchIndex[peer] = args.PrevLogIndex + len(args.Entries)

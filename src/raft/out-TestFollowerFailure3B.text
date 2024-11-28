@@ -1,0 +1,195 @@
+/*
+见 README lab3b bug3
+*/
+000009 T0000 LOG1 S0 Reset Election Timer
+000013 T0001 VOTE S0 Candidate->Candidate, For T1
+000014 T0001 DBUG S0 start election
+Test (3B): test progressive failure of followers ...
+000019 T0000 LOG1 S2 Reset Election Timer
+000019 T0001 VOTE S2 Candidate->Candidate, For T1
+000020 T0001 DBUG S2 start election
+000019 T0000 LOG1 S1 Reset Election Timer
+000020 T0001 VOTE S1 Candidate->Candidate, For T1
+000021 T0001 DBUG S1 start election
+000023 T0001 VOTE S1 Received RequestVote RPC, from S0,
+000023 T0001 VOTE S1 -> S0, Reject, Already voted to S1
+000024 T0001 VOTE S2 Received RequestVote RPC, from S0,
+000024 T0001 VOTE S2 -> S0, Reject, Already voted to S2
+000024 T0001 VOTE S1 Received RequestVote RPC, from S2,
+000024 T0001 VOTE S1 -> S2, Reject, Already voted to S1
+000024 T0001 VOTE S2 Received RequestVote RPC, from S1,
+000024 T0001 VOTE S2 -> S1, Reject, Already voted to S2
+000025 T0001 VOTE S0 Received RequestVote RPC, from S1,
+000025 T0001 VOTE S0 -> S1, Reject, Already voted to S0
+000025 T0001 VOTE S0 Received RequestVote RPC, from S2,
+000025 T0001 VOTE S0 -> S2, Reject, Already voted to S0
+003095 T0001 LOG1 S1 Reset Election Timer
+003095 T0002 VOTE S1 Candidate->Candidate, For T2
+003096 T0002 DBUG S1 start election
+003098 T0001 VOTE S2 Received RequestVote RPC, from S1,
+003098 T0001 LOG1 S2 Candidate -> Follower, T1 -> T2
+003098 T0002 VOTE S2 Compare last log, Me: [0]T0, Candidate: [0]T0
+003098 T0002 LOG1 S2 Reset Election Timer
+003098 T0002 VOTE S2 -> S1, vote granted
+003098 T0001 VOTE S0 Received RequestVote RPC, from S1,
+003098 T0001 LOG1 S0 Candidate -> Follower, T1 -> T2
+003098 T0002 VOTE S0 Compare last log, Me: [0]T0, Candidate: [0]T0
+003098 T0002 VOTE S1 Vote from S2, total votes 2
+003099 T0002 LEAD S1 Candidate Become leader in T2
+003098 T0002 LOG1 S0 Reset Election Timer
+003099 T0002 VOTE S0 -> S1, vote granted
+003099 T0002 VOTE S1 Lost Context, abort RequestVoteReply from S0
+003100 T0002 VOTE S2 Received AppendEntries RPC, from S1,
+003100 T0002 LOG1 S2 Reset Election Timer
+003100 T0002 LOG2 S2 <- S1, Append log success, (0,0]
+003101 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+003101 T0002 LOG1 S0 Reset Election Timer
+003101 T0002 DBUG S1 Match index after sort: [0 0 0], majority[1]=0
+003101 T0002 LOG2 S0 <- S1, Append log success, (0,0]
+003101 T0002 DBUG S1 Match index after sort: [0 0 0], majority[1]=0
+003568 T0002 LEAD S1 Leader accept Log, Index:1, T2
+005107 T0002 VOTE S2 Received AppendEntries RPC, from S1,
+005108 T0002 LOG1 S2 Reset Election Timer
+005108 T0002 LOG2 S2 <- S1, Append log success, (0,1]
+005109 T0002 DBUG S1 Match index after sort: [0 1 1], majority[1]=1
+005109 T0002 APLY S1 Leader update commitIndex from 0 to 1
+005109 T0002 APLY S1 Apply log［1, 1］
+005107 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+005110 T0002 LOG1 S0 Reset Election Timer
+005110 T0002 LOG2 S0 <- S1, Append log success, (0,1]
+005111 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+007128 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+007128 T0002 LOG1 S0 Reset Election Timer
+007128 T0002 LOG2 S0 <- S1, Append log success, (1,1]
+007128 T0002 APLY S0 Follower update commitIndex from 0 to 1
+007129 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+007128 T0002 VOTE S2 Received AppendEntries RPC, from S1,
+007130 T0002 LOG1 S2 Reset Election Timer
+007130 T0002 LOG2 S2 <- S1, Append log success, (1,1]
+007130 T0002 APLY S2 Follower update commitIndex from 0 to 1
+007130 T0002 APLY S0 Apply log［1, 1］
+007131 T0002 APLY S2 Apply log［1, 1］
+007132 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+009142 T0002 VOTE S2 Received AppendEntries RPC, from S1,
+009142 T0002 LOG1 S2 Reset Election Timer
+009142 T0002 LOG2 S2 <- S1, Append log success, (1,1]
+009144 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+009144 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+009145 T0002 LOG1 S0 Reset Election Timer
+009145 T0002 LOG2 S0 <- S1, Append log success, (1,1]
+009145 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+011152 T0002 VOTE S2 Received AppendEntries RPC, from S1,
+011153 T0002 LOG1 S2 Reset Election Timer
+011153 T0002 LOG2 S2 <- S1, Append log success, (1,1]
+011155 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+011157 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+011157 T0002 LOG1 S0 Reset Election Timer
+011157 T0002 LOG2 S0 <- S1, Append log success, (1,1]
+011158 T0002 DBUG S1 Match index after sort: [1 1 1], majority[1]=1
+012404 T0000 DROP S3 disconnect S2
+012405 T0002 LEAD S1 Leader accept Log, Index:2, T2
+013155 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+013155 T0002 LOG1 S0 Reset Election Timer
+013156 T0002 LOG2 S0 <- S1, Append log success, (1,2]
+013156 T0002 DBUG S1 Match index after sort: [1 2 2], majority[1]=2
+013157 T0002 APLY S1 Leader update commitIndex from 1 to 2
+013157 T0002 APLY S1 Apply log［2, 2］
+014644 T0002 LOG1 S2 Reset Election Timer
+014646 T0003 VOTE S2 Candidate->Candidate, For T3
+014646 T0003 DBUG S2 start election
+015178 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+015179 T0002 LOG1 S0 Reset Election Timer
+015179 T0002 LOG2 S0 <- S1, Append log success, (2,2]
+015179 T0002 APLY S0 Follower update commitIndex from 1 to 2
+015180 T0002 DBUG S1 Match index after sort: [1 2 2], majority[1]=2
+015180 T0002 APLY S0 Apply log［2, 2］
+017193 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+017193 T0002 LOG1 S0 Reset Election Timer
+017193 T0002 LOG2 S0 <- S1, Append log success, (2,2]
+017195 T0002 DBUG S1 Match index after sort: [1 2 2], majority[1]=2
+017831 T0003 LOG1 S2 Reset Election Timer
+017832 T0004 VOTE S2 Candidate->Candidate, For T4
+017832 T0004 DBUG S2 start election
+019220 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+019220 T0002 LOG1 S0 Reset Election Timer
+019220 T0002 LOG2 S0 <- S1, Append log success, (2,2]
+019221 T0002 DBUG S1 Match index after sort: [1 2 2], majority[1]=2
+019629 T0002 LOG1 S1 -> S2, Lost or crashed
+021289 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+021290 T0002 LOG1 S0 Reset Election Timer
+021290 T0002 LOG2 S0 <- S1, Append log success, (2,2]
+021291 T0002 DBUG S1 Match index after sort: [1 2 2], majority[1]=2
+021882 T0004 LOG1 S2 Reset Election Timer
+021883 T0005 VOTE S2 Candidate->Candidate, For T5
+021883 T0005 DBUG S2 start election
+023247 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+023248 T0002 LOG1 S0 Reset Election Timer
+023248 T0002 LOG2 S0 <- S1, Append log success, (2,2]
+023291 T0002 DBUG S1 Match index after sort: [1 2 2], majority[1]=2
+024677 T0002 LOG1 S1 -> S2, Lost or crashed
+025220 T0002 LEAD S1 Leader accept Log, Index:3, T2
+025244 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+025245 T0002 LOG1 S0 Reset Election Timer
+025245 T0002 LOG2 S0 <- S1, Append log success, (2,3]
+025245 T0002 DBUG S1 Match index after sort: [1 3 3], majority[1]=3
+025246 T0002 APLY S1 Leader update commitIndex from 2 to 3
+025246 T0002 APLY S1 Apply log［3, 3］
+027251 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+027252 T0002 LOG1 S0 Reset Election Timer
+027252 T0002 LOG2 S0 <- S1, Append log success, (3,3]
+027252 T0002 APLY S0 Follower update commitIndex from 2 to 3
+027253 T0002 DBUG S1 Match index after sort: [1 3 3], majority[1]=3
+027253 T0002 APLY S0 Apply log［3, 3］
+028045 T0005 LOG1 S2 Reset Election Timer
+028046 T0006 VOTE S2 Candidate->Candidate, For T6
+028046 T0006 DBUG S2 start election
+028467 T0006 DBUG S2 Ask vote from S1, lost or error
+028529 T0002 LOG1 S1 -> S2, Lost or crashed
+029260 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+029270 T0002 LOG1 S0 Reset Election Timer
+029270 T0002 LOG2 S0 <- S1, Append log success, (3,3]
+029280 T0002 DBUG S1 Match index after sort: [1 3 3], majority[1]=3
+031273 T0002 VOTE S0 Received AppendEntries RPC, from S1,
+031274 T0002 LOG1 S0 Reset Election Timer
+031274 T0002 LOG2 S0 <- S1, Append log success, (3,3]
+031275 T0002 DBUG S1 Match index after sort: [1 3 3], majority[1]=3
+032593 T0000 DROP S3 disconnect S2
+032593 T0000 DROP S3 disconnect S0
+032594 T0002 LEAD S1 Leader accept Log, Index:4, T2
+033119 T0006 LOG1 S2 Reset Election Timer
+033119 T0007 VOTE S2 Candidate->Candidate, For T7
+033119 T0007 DBUG S2 start election
+035542 T0002 LOG1 S0 Reset Election Timer
+035543 T0003 VOTE S0 Candidate->Candidate, For T3
+035543 T0003 DBUG S0 start election
+037015 T0007 LOG1 S2 Reset Election Timer
+037016 T0008 VOTE S2 Candidate->Candidate, For T8
+037017 T0008 DBUG S2 start election
+037575 T0008 DBUG S2 Ask vote from S0, lost or error
+039656 T0008 DBUG S2 Ask vote from S0, lost or error
+040925 T0008 LOG1 S2 Reset Election Timer
+040926 T0009 VOTE S2 Candidate->Candidate, For T9
+040926 T0009 DBUG S2 start election
+041185 T0003 LOG1 S0 Reset Election Timer
+041185 T0004 VOTE S0 Candidate->Candidate, For T4
+041186 T0004 DBUG S0 start election
+044629 T0004 LOG1 S0 Reset Election Timer
+044633 T0005 VOTE S0 Candidate->Candidate, For T5
+044633 T0005 DBUG S0 start election
+045282 T0002 LOG1 S1 -> S0, Lost or crashed
+046693 T0009 LOG1 S2 Reset Election Timer
+046694 T0010 VOTE S2 Candidate->Candidate, For T10
+046694 T0010 DBUG S2 start election
+047518 T0010 DBUG S2 Ask vote from S1, lost or error
+050566 T0002 LOG1 S1 -> S2, Lost or crashed
+050777 T0005 LOG1 S0 Reset Election Timer
+050778 T0006 VOTE S0 Candidate->Candidate, For T6
+050778 T0006 DBUG S0 start election
+051695 T0010 LOG1 S2 Reset Election Timer
+051696 T0011 VOTE S2 Candidate->Candidate, For T11
+051696 T0011 DBUG S2 start election
+051880 T0002 LOG1 S1 -> S2, Lost or crashed
+052568 T0011 DBUG S2 Ask vote from S1, lost or error
+  ... Passed --   5.3  3   83   17725    3
+PASS
+ok  	6.5840/raft	5.951s
