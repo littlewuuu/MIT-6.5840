@@ -277,7 +277,9 @@ func TestFailAgree3B(t *testing.T) {
 
 	// disconnect one follower from the network.
 	leader := cfg.checkOneLeader()
-	cfg.disconnect((leader + 1) % servers)
+	s := (leader + 1) % servers
+	LOG(servers, 0, DDrop, "Disconnect S%d", s)
+	cfg.disconnect(s)
 
 	// the leader and remaining follower should be
 	// able to agree despite the disconnected follower.
@@ -289,6 +291,7 @@ func TestFailAgree3B(t *testing.T) {
 
 	// re-connect
 	cfg.connect((leader + 1) % servers)
+	LOG(servers, 0, DDrop, "re-connect S%d", s)
 
 	// the full set of servers should preserve
 	// previous agreements, and be able to agree
@@ -502,8 +505,11 @@ func TestBackup3B(t *testing.T) {
 	// put leader and one follower in a partition
 	leader1 := cfg.checkOneLeader()
 	cfg.disconnect((leader1 + 2) % servers)
+	LOG(servers, 0, DDrop, "disconnect S%d", (leader1+2)%servers)
 	cfg.disconnect((leader1 + 3) % servers)
+	LOG(servers, 0, DDrop, "disconnect S%d", (leader1+3)%servers)
 	cfg.disconnect((leader1 + 4) % servers)
+	LOG(servers, 0, DDrop, "disconnect S%d", (leader1+4)%servers)
 
 	// submit lots of commands that won't commit
 	for i := 0; i < 50; i++ {
@@ -513,12 +519,17 @@ func TestBackup3B(t *testing.T) {
 	time.Sleep(RaftElectionTimeout / 2)
 
 	cfg.disconnect((leader1 + 0) % servers)
+	LOG(servers, 0, DDrop, "disconnect S%d", (leader1+0)%servers)
 	cfg.disconnect((leader1 + 1) % servers)
+	LOG(servers, 0, DDrop, "disconnect S%d", (leader1+1)%servers)
 
 	// allow other partition to recover
 	cfg.connect((leader1 + 2) % servers)
+	LOG(servers, 0, DDrop, "re-connect S%d", (leader1+2)%servers)
 	cfg.connect((leader1 + 3) % servers)
+	LOG(servers, 0, DDrop, "re-connect S%d", (leader1+3)%servers)
 	cfg.connect((leader1 + 4) % servers)
+	LOG(servers, 0, DDrop, "re-connect S%d", (leader1+4)%servers)
 
 	// lots of successful commands to new group.
 	for i := 0; i < 50; i++ {
@@ -532,6 +543,7 @@ func TestBackup3B(t *testing.T) {
 		other = (leader2 + 1) % servers
 	}
 	cfg.disconnect(other)
+	LOG(servers, 0, DDrop, "disconnect S%d", other)
 
 	// lots more commands that won't commit
 	for i := 0; i < 50; i++ {
@@ -543,10 +555,14 @@ func TestBackup3B(t *testing.T) {
 	// bring original leader back to life,
 	for i := 0; i < servers; i++ {
 		cfg.disconnect(i)
+		LOG(servers, 0, DDrop, "disconnect S%d", i)
 	}
 	cfg.connect((leader1 + 0) % servers)
+	LOG(servers, 0, DDrop, "re-connect S%d", (leader1+0)%servers)
 	cfg.connect((leader1 + 1) % servers)
+	LOG(servers, 0, DDrop, "re-connect S%d", (leader1+1)%servers)
 	cfg.connect(other)
+	LOG(servers, 0, DDrop, "re-connect S%d", other)
 
 	// lots of successful commands to new group.
 	for i := 0; i < 50; i++ {
@@ -556,6 +572,7 @@ func TestBackup3B(t *testing.T) {
 	// now everyone
 	for i := 0; i < servers; i++ {
 		cfg.connect(i)
+		LOG(servers, 0, DDrop, "re-connect S%d", i)
 	}
 	cfg.one(rand.Int(), servers, true)
 

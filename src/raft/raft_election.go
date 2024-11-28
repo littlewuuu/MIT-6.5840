@@ -9,8 +9,10 @@ import (
 // field names must start with capital letters!
 type RequestVoteArgs struct {
 	// Your data here (3A, 3B).
-	Term        int
-	CandidateId int
+	Term         int
+	CandidateId  int
+	LastLogIndex int
+	LastLogTerm  int
 }
 
 // example RequestVote RPC reply structure.
@@ -66,11 +68,13 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	reply.Term = rf.currentTerm
 	reply.VoteGranted = false
 
+	// step 1
 	if args.Term < rf.currentTerm {
 		LOG(rf.me, rf.currentTerm, DVote, "From S%d, Reject vote, higher term, T%d>T%d", args.CandidateId, rf.currentTerm, args.Term)
 		return
 	}
 
+	// fig.2 all servers rules 2
 	if args.Term > rf.currentTerm {
 		rf.becomeFollowerLocked(args.Term)
 	}
@@ -80,6 +84,11 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 		return
 	}
 
+	// step 2
+	if !rf.isCandidateUptoDate(args.LastLogTerm, args.LastLogIndex) {
+		LOG(rf.me, rf.currentTerm, DVote, "Reject vote, S%d's log not up to date", args.CandidateId)
+		return
+	}
 	reply.VoteGranted = true
 	rf.votedFor = args.CandidateId
 	rf.resetElectionTimerLocked()
@@ -104,6 +113,15 @@ func (rf *Raft) electionTicker() {
 	}
 }
 
+// check if candidate's log is at least as up-to-date as rf.me
+func (rf *Raft) isCandidateUptoDate(candidateLastLogTerm, candidateLastLogIndex int) bool {
+	logLen := len(rf.logs)
+	lastLogTerm := rf.logs[logLen-1].Term
+	lastLogIndex := logLen - 1
+	LOG(rf.me, rf.currentTerm, DVote, "Compare last log, Me: [%d]T%d, Candidate: [%d]T%d", lastLogIndex, lastLogTerm, candidateLastLogIndex, candidateLastLogTerm)
+	return (candidateLastLogTerm > lastLogTerm) || (candidateLastLogTerm == lastLogTerm && candidateLastLogIndex >= lastLogIndex)
+}
+
 func (rf *Raft) resetElectionTimerLocked() {
 	LOG(rf.me, rf.currentTerm, DLog, "Reset Election Timer")
 	rf.electionStartTime = time.Now()
@@ -118,10 +136,8 @@ func (rf *Raft) isElectionTimeOut() bool {
 
 func (rf *Raft) startElection(term int) {
 	LOG(rf.me, rf.currentTerm, DDebug, "start election")
-	rf.mu.Lock()
-	defer rf.mu.Unlock()
-	votes := 0
 
+	votes := 0
 	askVoteFromPeer := func(peer int, args *RequestVoteArgs) {
 		reply := &RequestVoteReply{}
 		ok := rf.sendRequestVoteRPC(peer, args, reply)
@@ -156,6 +172,9 @@ func (rf *Raft) startElection(term int) {
 		}
 	}
 
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+
 	if rf.contextLostLocked(Candidate, term) {
 		LOG(rf.me, rf.currentTerm, DVote, "Lost Candidate to %s, abort RequestVote", rf.role)
 		return
@@ -166,8 +185,10 @@ func (rf *Raft) startElection(term int) {
 			continue
 		}
 		args := &RequestVoteArgs{
-			Term:        rf.currentTerm,
-			CandidateId: rf.me,
+			Term:         rf.currentTerm,
+			CandidateId:  rf.me,
+			LastLogIndex: len(rf.logs) - 1,
+			LastLogTerm:  rf.logs[len(rf.logs)-1].Term,
 		}
 		go askVoteFromPeer(peer, args)
 	}

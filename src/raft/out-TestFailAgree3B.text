@@ -1,0 +1,1081 @@
+/*
+存在的问题在 AppendEntriesRPC handler 中，只有在最后符合接受 Leader log entries 情况的时候，才会 resetElectionTimeOut，
+这样就会导致如果 follower 需要追赶的 log entries 过长时，还没有追赶到，follower 就会 timeout 从而出发选举，
+虽然成为不了 Leader 的，但是新的 Leader 当选后 nextIndex[peer] 会重新初始化，又重复上面的流程，
+导致当前 peer 的 logs 没有进展
+*/
+000005 T0000 LOG1 S0 Reset Election Timer
+Test (3B): agreement after follower reconnects ...
+000007 T0001 VOTE S0 Candidate->Candidate, For T1
+000007 T0000 LOG1 S1 Reset Election Timer
+000007 T0001 VOTE S1 Candidate->Candidate, For T1
+000007 T0000 LOG1 S2 Reset Election Timer
+000007 T0001 VOTE S2 Candidate->Candidate, For T1
+000007 T0001 DBUG S1 start election
+000007 T0001 DBUG S2 start election
+000007 T0001 DBUG S0 start election
+000011 T0001 VOTE S1 Received RequestVote RPC, from S2,
+000011 T0001 VOTE S1 -> S2, Reject, Already voted to S1
+000011 T0001 VOTE S2 Received RequestVote RPC, from S1,
+000011 T0001 VOTE S2 -> S1, Reject, Already voted to S2
+000011 T0001 VOTE S1 Received RequestVote RPC, from S0,
+000011 T0001 VOTE S1 -> S0, Reject, Already voted to S1
+000011 T0001 VOTE S0 Received RequestVote RPC, from S1,
+000011 T0001 VOTE S0 -> S1, Reject, Already voted to S0
+000012 T0001 VOTE S0 Received RequestVote RPC, from S2,
+000012 T0001 VOTE S2 Received RequestVote RPC, from S0,
+000012 T0001 VOTE S2 -> S0, Reject, Already voted to S2
+000012 T0001 VOTE S0 -> S2, Reject, Already voted to S0
+004689 T0001 LOG1 S0 Reset Election Timer
+004698 T0002 VOTE S0 Candidate->Candidate, For T2
+004698 T0002 DBUG S0 start election
+004703 T0001 VOTE S2 Received RequestVote RPC, from S0,
+004703 T0001 LOG1 S2 Candidate -> Follower, T1 -> T2
+004703 T0002 VOTE S2 Compare last log, Me: [0]T0, Candidate: [0]T0
+004703 T0002 LOG1 S2 Reset Election Timer
+004703 T0002 VOTE S2 -> S0, vote granted
+004708 T0002 VOTE S0 Vote from S2, total votes 2
+004708 T0002 LEAD S0 Candidate Become leader in T2
+004709 T0001 VOTE S1 Received RequestVote RPC, from S0,
+004709 T0001 LOG1 S1 Candidate -> Follower, T1 -> T2
+004709 T0002 VOTE S1 Compare last log, Me: [0]T0, Candidate: [0]T0
+004709 T0002 LOG1 S1 Reset Election Timer
+004709 T0002 VOTE S1 -> S0, vote granted
+004712 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+004712 T0002 LOG2 S2 <- S0, Append log success, (0,0]
+004712 T0002 LOG1 S2 Reset Election Timer
+004713 T0002 DBUG S0 Match index after sort: [0 0 0], majority[1]=0
+004714 T0002 VOTE S1 Received AppendEntries RPC, from S0,
+004720 T0002 LOG2 S1 <- S0, Append log success, (0,0]
+004720 T0002 LOG1 S1 Reset Election Timer
+004721 T0002 DBUG S0 Match index after sort: [0 0 0], majority[1]=0
+004727 T0002 VOTE S0 Lost Context, abort RequestVoteReply from S1
+005092 T0002 LEAD S0 Leader accept Log, Index:1, T2
+006722 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+006723 T0002 LOG2 S2 <- S0, Append log success, (0,1]
+006723 T0002 LOG1 S2 Reset Election Timer
+006723 T0002 VOTE S1 Received AppendEntries RPC, from S0,
+006723 T0002 LOG2 S1 <- S0, Append log success, (0,1]
+006723 T0002 LOG1 S1 Reset Election Timer
+006724 T0002 DBUG S0 Match index after sort: [0 1 1], majority[1]=1
+006724 T0002 APLY S0 Leader update commitIndex from 0 to 1
+006724 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+006726 T0002 APLY S0 Apply log［1, 1］
+008725 T0002 VOTE S1 Received AppendEntries RPC, from S0,
+008725 T0002 LOG2 S1 <- S0, Append log success, (1,1]
+008725 T0002 APLY S1 Follower update commitIndex from 0 to 1
+008725 T0002 LOG1 S1 Reset Election Timer
+008725 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+008725 T0002 LOG2 S2 <- S0, Append log success, (1,1]
+008725 T0002 APLY S2 Follower update commitIndex from 0 to 1
+008725 T0002 LOG1 S2 Reset Election Timer
+008726 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+008726 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+008726 T0002 APLY S2 Apply log［1, 1］
+008726 T0002 APLY S1 Apply log［1, 1］
+010742 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+010742 T0002 LOG2 S2 <- S0, Append log success, (1,1]
+010743 T0002 LOG1 S2 Reset Election Timer
+010744 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+010745 T0002 VOTE S1 Received AppendEntries RPC, from S0,
+010746 T0002 LOG2 S1 <- S0, Append log success, (1,1]
+010746 T0002 LOG1 S1 Reset Election Timer
+010752 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+012750 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+012751 T0002 LOG2 S2 <- S0, Append log success, (1,1]
+012751 T0002 LOG1 S2 Reset Election Timer
+012750 T0002 VOTE S1 Received AppendEntries RPC, from S0,
+012752 T0002 LOG2 S1 <- S0, Append log success, (1,1]
+012752 T0002 LOG1 S1 Reset Election Timer
+012753 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+012753 T0002 DBUG S0 Match index after sort: [1 1 1], majority[1]=1
+013482 T0000 DROP S3 Disconnect S1
+013483 T0002 LEAD S0 Leader accept Log, Index:2, T2
+014751 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+014751 T0002 LOG2 S2 <- S0, Append log success, (1,2]
+014752 T0002 LOG1 S2 Reset Election Timer
+014754 T0002 DBUG S0 Match index after sort: [1 2 2], majority[1]=2
+014754 T0002 APLY S0 Leader update commitIndex from 1 to 2
+014754 T0002 APLY S0 Apply log［2, 2］
+016762 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+016764 T0002 LOG2 S2 <- S0, Append log success, (2,2]
+016764 T0002 APLY S2 Follower update commitIndex from 1 to 2
+016765 T0002 LOG1 S2 Reset Election Timer
+016766 T0002 DBUG S0 Match index after sort: [1 2 2], majority[1]=2
+016766 T0002 APLY S2 Apply log［2, 2］
+016855 T0002 LEAD S0 Leader accept Log, Index:3, T2
+017411 T0002 LOG1 S1 Reset Election Timer
+017418 T0003 VOTE S1 Candidate->Candidate, For T3
+017419 T0003 DBUG S1 start election
+018759 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+018759 T0002 LOG2 S2 <- S0, Append log success, (2,3]
+018759 T0002 LOG1 S2 Reset Election Timer
+018760 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+018760 T0002 APLY S0 Leader update commitIndex from 2 to 3
+018760 T0002 APLY S0 Apply log［3, 3］
+020283 T0003 LOG1 S1 Reset Election Timer
+020283 T0004 VOTE S1 Candidate->Candidate, For T4
+020283 T0004 DBUG S1 start election
+020771 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+020771 T0002 LOG2 S2 <- S0, Append log success, (3,3]
+020771 T0002 APLY S2 Follower update commitIndex from 2 to 3
+020771 T0002 LOG1 S2 Reset Election Timer
+020772 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+020772 T0002 APLY S2 Apply log［3, 3］
+022786 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+022787 T0002 LOG2 S2 <- S0, Append log success, (3,3]
+022787 T0002 LOG1 S2 Reset Election Timer
+022788 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+023322 T0004 DBUG S1 Ask vote from S2, lost or error
+024799 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+024799 T0002 LOG2 S2 <- S0, Append log success, (3,3]
+024799 T0002 LOG1 S2 Reset Election Timer
+024801 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+025586 T0004 LOG1 S1 Reset Election Timer
+025586 T0005 VOTE S1 Candidate->Candidate, For T5
+025587 T0005 DBUG S1 start election
+026240 T0002 LOG1 S0 -> S1, Lost or crashed
+026241 T0002 LOG1 S0 -> S1 failed, set nextIndex from 2 to 1
+026809 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+026810 T0002 LOG2 S2 <- S0, Append log success, (3,3]
+026810 T0002 LOG1 S2 Reset Election Timer
+026812 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+028300 T0005 DBUG S1 Ask vote from S2, lost or error
+028815 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+028816 T0002 LOG2 S2 <- S0, Append log success, (3,3]
+028816 T0002 LOG1 S2 Reset Election Timer
+028817 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+029598 T0005 LOG1 S1 Reset Election Timer
+029598 T0006 VOTE S1 Candidate->Candidate, For T6
+029599 T0006 DBUG S1 start election
+030830 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+030830 T0002 LOG2 S2 <- S0, Append log success, (3,3]
+030830 T0002 LOG1 S2 Reset Election Timer
+030831 T0002 DBUG S0 Match index after sort: [1 3 3], majority[1]=3
+030854 T0002 LEAD S0 Leader accept Log, Index:4, T2
+032868 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+032873 T0002 LOG2 S2 <- S0, Append log success, (3,4]
+032873 T0002 LOG1 S2 Reset Election Timer
+032874 T0002 DBUG S0 Match index after sort: [1 4 4], majority[1]=4
+032874 T0002 APLY S0 Leader update commitIndex from 3 to 4
+032874 T0002 APLY S0 Apply log［4, 4］
+033664 T0006 DBUG S1 Ask vote from S2, lost or error
+033846 T0006 DBUG S1 Ask vote from S0, lost or error
+034729 T0006 LOG1 S1 Reset Election Timer
+034729 T0007 VOTE S1 Candidate->Candidate, For T7
+034729 T0007 DBUG S1 start election
+034849 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+034849 T0002 LOG2 S2 <- S0, Append log success, (4,4]
+034849 T0002 APLY S2 Follower update commitIndex from 3 to 4
+034849 T0002 LOG1 S2 Reset Election Timer
+034851 T0002 DBUG S0 Match index after sort: [1 4 4], majority[1]=4
+034851 T0002 APLY S2 Apply log［4, 4］
+035029 T0002 LEAD S0 Leader accept Log, Index:5, T2
+035513 T0002 LOG1 S0 -> S1, Lost or crashed
+035514 T0002 LOG1 S0 -> S1 failed, set nextIndex from 1 to 1
+036852 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+036853 T0002 LOG2 S2 <- S0, Append log success, (4,5]
+036853 T0002 LOG1 S2 Reset Election Timer
+036855 T0002 DBUG S0 Match index after sort: [1 5 5], majority[1]=5
+036855 T0002 APLY S0 Leader update commitIndex from 4 to 5
+036855 T0002 APLY S0 Apply log［5, 5］
+037898 T0007 LOG1 S1 Reset Election Timer
+037899 T0008 VOTE S1 Candidate->Candidate, For T8
+037899 T0008 DBUG S1 start election
+038860 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+038861 T0002 LOG2 S2 <- S0, Append log success, (5,5]
+038861 T0002 APLY S2 Follower update commitIndex from 4 to 5
+038861 T0002 LOG1 S2 Reset Election Timer
+038861 T0002 APLY S2 Apply log［5, 5］
+038861 T0002 DBUG S0 Match index after sort: [1 5 5], majority[1]=5
+038893 T0000 DROP S3 re-connect S1
+038893 T0002 LEAD S0 Leader accept Log, Index:6, T2
+040868 T0002 VOTE S2 Received AppendEntries RPC, from S0,
+040869 T0002 LOG2 S2 <- S0, Append log success, (5,6]
+040869 T0002 LOG1 S2 Reset Election Timer
+040869 T0008 VOTE S1 Received AppendEntries RPC, from S0,
+040869 T0008 LOG2 S1 <-0, Reject append log, higher term T2 < T8
+040870 T0002 DBUG S0 Match index after sort: [1 6 6], majority[1]=6
+040870 T0002 APLY S0 Leader update commitIndex from 5 to 6
+040870 T0002 LOG1 S0 Leader -> Follower, T2 -> T8
+040870 T0008 APLY S0 Apply log［6, 6］
+041868 T0008 LOG1 S0 Reset Election Timer
+041868 T0009 VOTE S0 Candidate->Candidate, For T9
+041869 T0009 DBUG S0 start election
+041872 T0002 VOTE S2 Received RequestVote RPC, from S0,
+041872 T0002 LOG1 S2 Follower -> Follower, T2 -> T9
+041872 T0009 VOTE S2 Compare last log, Me: [6]T2, Candidate: [6]T2
+041873 T0009 LOG1 S2 Reset Election Timer
+041873 T0009 VOTE S2 -> S0, vote granted
+041874 T0009 VOTE S0 Vote from S2, total votes 2
+041874 T0009 LEAD S0 Candidate Become leader in T9
+041877 T0009 VOTE S2 Received AppendEntries RPC, from S0,
+041877 T0009 LOG2 S2 <- S0, Append log success, (6,6]
+041877 T0009 APLY S2 Follower update commitIndex from 5 to 6
+041877 T0009 LOG1 S2 Reset Election Timer
+041878 T0009 DBUG S0 Match index after sort: [0 6 6], majority[1]=6
+041872 T0008 VOTE S1 Received RequestVote RPC, from S0,
+041878 T0008 LOG1 S1 Candidate -> Follower, T8 -> T9
+041878 T0009 VOTE S1 Compare last log, Me: [1]T2, Candidate: [6]T2
+041878 T0009 LOG1 S1 Reset Election Timer
+041878 T0009 VOTE S1 -> S0, vote granted
+041879 T0009 VOTE S0 Lost Context, abort RequestVoteReply from S1
+041881 T0009 VOTE S1 Received AppendEntries RPC, from S0,
+041881 T0009 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:6
+041883 T0009 LOG1 S0 -> S1 failed, set nextIndex from 7 to 6
+041883 T0009 APLY S2 Apply log［6, 6］
+042873 T0009 LOG1 S0 Context Lost leader[2] -> Leader[T9]
+043884 T0009 VOTE S2 Received AppendEntries RPC, from S0,
+043885 T0009 LOG2 S2 <- S0, Append log success, (6,6]
+043885 T0009 LOG1 S2 Reset Election Timer
+043884 T0009 VOTE S1 Received AppendEntries RPC, from S0,
+043885 T0009 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:5
+043885 T0009 DBUG S0 Match index after sort: [0 6 6], majority[1]=6
+043886 T0009 LOG1 S0 -> S1 failed, set nextIndex from 6 to 5
+045206 T0009 LOG1 S0 -> S1, Context Lost, T2:Leader->T9:Leader
+045890 T0009 VOTE S2 Received AppendEntries RPC, from S0,
+045891 T0009 LOG2 S2 <- S0, Append log success, (6,6]
+045891 T0009 LOG1 S2 Reset Election Timer
+045892 T0009 DBUG S0 Match index after sort: [0 6 6], majority[1]=6
+045893 T0009 VOTE S1 Received AppendEntries RPC, from S0,
+045894 T0009 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:4
+045894 T0009 LOG1 S0 -> S1 failed, set nextIndex from 5 to 4
+046425 T0009 LOG1 S1 Reset Election Timer
+046426 T0010 VOTE S1 Candidate->Candidate, For T10
+046426 T0010 DBUG S1 start election
+046432 T0009 VOTE S0 Received RequestVote RPC, from S1,
+046432 T0009 LOG1 S0 Leader -> Follower, T9 -> T10
+046433 T0010 VOTE S0 Compare last log, Me: [6]T2, Candidate: [1]T2
+046433 T0010 VOTE S0 Reject vote, S1's log not up to date
+046437 T0009 VOTE S2 Received RequestVote RPC, from S1,
+046437 T0009 LOG1 S2 Follower -> Follower, T9 -> T10
+046437 T0010 VOTE S2 Compare last log, Me: [6]T2, Candidate: [1]T2
+046437 T0010 VOTE S2 Reject vote, S1's log not up to date
+046922 T0010 LOG1 S0 Reset Election Timer
+046923 T0011 VOTE S0 Candidate->Candidate, For T11
+046923 T0011 DBUG S0 start election
+046928 T0010 VOTE S1 Received RequestVote RPC, from S0,
+046928 T0010 LOG1 S1 Candidate -> Follower, T10 -> T11
+046928 T0011 VOTE S1 Compare last log, Me: [1]T2, Candidate: [6]T2
+046928 T0011 LOG1 S1 Reset Election Timer
+046928 T0011 VOTE S1 -> S0, vote granted
+046928 T0010 VOTE S2 Received RequestVote RPC, from S0,
+046928 T0010 LOG1 S2 Follower -> Follower, T10 -> T11
+046928 T0011 VOTE S2 Compare last log, Me: [6]T2, Candidate: [6]T2
+046928 T0011 LOG1 S2 Reset Election Timer
+046928 T0011 VOTE S2 -> S0, vote granted
+046929 T0011 VOTE S0 Vote from S2, total votes 2
+046929 T0011 LEAD S0 Candidate Become leader in T11
+046929 T0011 VOTE S0 Lost Context, abort RequestVoteReply from S1
+046931 T0011 VOTE S2 Received AppendEntries RPC, from S0,
+046931 T0011 LOG2 S2 <- S0, Append log success, (6,6]
+046931 T0011 LOG1 S2 Reset Election Timer
+046934 T0011 VOTE S1 Received AppendEntries RPC, from S0,
+046934 T0011 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:6
+046935 T0011 LOG1 S0 -> S1 failed, set nextIndex from 7 to 6
+046935 T0011 DBUG S0 Match index after sort: [0 6 6], majority[1]=6
+047895 T0011 LOG1 S0 Context Lost leader[9] -> Leader[T11]
+048943 T0011 VOTE S1 Received AppendEntries RPC, from S0,
+048943 T0011 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:5
+048944 T0011 LOG1 S0 -> S1 failed, set nextIndex from 6 to 5
+048943 T0011 VOTE S2 Received AppendEntries RPC, from S0,
+048944 T0011 LOG2 S2 <- S0, Append log success, (6,6]
+048944 T0011 LOG1 S2 Reset Election Timer
+048946 T0011 DBUG S0 Match index after sort: [0 6 6], majority[1]=6
+049437 T0011 LOG1 S0 -> S1, Context Lost, T2:Leader->T11:Leader
+050952 T0011 VOTE S1 Received AppendEntries RPC, from S0,
+050953 T0011 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:4
+050954 T0011 LOG1 S0 -> S1 failed, set nextIndex from 5 to 4
+050952 T0011 VOTE S2 Received AppendEntries RPC, from S0,
+050954 T0011 LOG2 S2 <- S0, Append log success, (6,6]
+050954 T0011 LOG1 S2 Reset Election Timer
+050955 T0011 DBUG S0 Match index after sort: [0 6 6], majority[1]=6
+051963 T0011 LOG1 S1 Reset Election Timer
+051964 T0012 VOTE S1 Candidate->Candidate, For T12
+051964 T0012 DBUG S1 start election
+051970 T0011 VOTE S2 Received RequestVote RPC, from S1,
+051971 T0011 LOG1 S2 Follower -> Follower, T11 -> T12
+051971 T0012 VOTE S2 Compare last log, Me: [6]T2, Candidate: [1]T2
+051971 T0012 VOTE S2 Reject vote, S1's log not up to date
+051973 T0011 VOTE S0 Received RequestVote RPC, from S1,
+051973 T0011 LOG1 S0 Leader -> Follower, T11 -> T12
+051973 T0012 VOTE S0 Compare last log, Me: [6]T2, Candidate: [1]T2
+051973 T0012 VOTE S0 Reject vote, S1's log not up to date
+052956 T0012 LOG1 S0 Context Lost leader[11] -> Follower[T12]
+054548 T0012 LOG1 S0 -> S1, Context Lost, T2:Leader->T12:Follower
+054701 T0012 LOG1 S2 Reset Election Timer
+054701 T0013 VOTE S2 Candidate->Candidate, For T13
+054702 T0013 DBUG S2 start election
+054709 T0012 VOTE S1 Received RequestVote RPC, from S2,
+054709 T0012 LOG1 S1 Candidate -> Follower, T12 -> T13
+054709 T0013 VOTE S1 Compare last log, Me: [1]T2, Candidate: [6]T2
+054709 T0013 LOG1 S1 Reset Election Timer
+054709 T0013 VOTE S1 -> S2, vote granted
+054711 T0012 VOTE S0 Received RequestVote RPC, from S2,
+054711 T0013 VOTE S2 Vote from S1, total votes 2
+054711 T0012 LOG1 S0 Follower -> Follower, T12 -> T13
+054711 T0013 LEAD S2 Candidate Become leader in T13
+054711 T0013 VOTE S0 Compare last log, Me: [6]T2, Candidate: [6]T2
+054711 T0013 LOG1 S0 Reset Election Timer
+054711 T0013 VOTE S0 -> S2, vote granted
+054716 T0013 VOTE S1 Received AppendEntries RPC, from S2,
+054716 T0013 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:6
+054717 T0013 LOG1 S2 -> S1 failed, set nextIndex from 7 to 6
+054718 T0013 VOTE S0 Received AppendEntries RPC, from S2,
+054718 T0013 LOG2 S0 <- S2, Append log success, (6,6]
+054718 T0013 LOG1 S0 Reset Election Timer
+054718 T0013 VOTE S2 Lost Context, abort RequestVoteReply from S0
+054719 T0013 DBUG S2 Match index after sort: [0 0 6], majority[1]=0
+056715 T0013 VOTE S0 Received AppendEntries RPC, from S2,
+056715 T0013 LOG2 S0 <- S2, Append log success, (6,6]
+056716 T0013 LOG1 S0 Reset Election Timer
+056716 T0013 DBUG S2 Match index after sort: [0 0 6], majority[1]=0
+056715 T0013 VOTE S1 Received AppendEntries RPC, from S2,
+056716 T0013 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:5
+056717 T0013 LOG1 S2 -> S1 failed, set nextIndex from 6 to 5
+057750 T0013 LOG1 S0 -> S1, Context Lost, T2:Leader->T13:Follower
+058142 T0013 LOG1 S1 Reset Election Timer
+058142 T0014 VOTE S1 Candidate->Candidate, For T14
+058143 T0014 DBUG S1 start election
+058148 T0013 VOTE S0 Received RequestVote RPC, from S1,
+058148 T0013 LOG1 S0 Follower -> Follower, T13 -> T14
+058148 T0014 VOTE S0 Compare last log, Me: [6]T2, Candidate: [1]T2
+058148 T0014 VOTE S0 Reject vote, S1's log not up to date
+058152 T0013 VOTE S2 Received RequestVote RPC, from S1,
+058152 T0013 LOG1 S2 Leader -> Follower, T13 -> T14
+058152 T0014 VOTE S2 Compare last log, Me: [6]T2, Candidate: [1]T2
+058152 T0014 VOTE S2 Reject vote, S1's log not up to date
+058723 T0014 LOG1 S2 Context Lost leader[13] -> Follower[T14]
+060096 T0014 LOG1 S0 -> S1, Context Lost, T2:Leader->T14:Follower
+060366 T0014 LOG1 S2 Reset Election Timer
+060366 T0015 VOTE S2 Candidate->Candidate, For T15
+060366 T0015 DBUG S2 start election
+060368 T0014 VOTE S1 Received RequestVote RPC, from S2,
+060368 T0014 VOTE S0 Received RequestVote RPC, from S2,
+060368 T0014 LOG1 S1 Candidate -> Follower, T14 -> T15
+060368 T0014 LOG1 S0 Follower -> Follower, T14 -> T15
+060368 T0015 VOTE S1 Compare last log, Me: [1]T2, Candidate: [6]T2
+060368 T0015 LOG1 S1 Reset Election Timer
+060368 T0015 VOTE S1 -> S2, vote granted
+060368 T0015 VOTE S0 Compare last log, Me: [6]T2, Candidate: [6]T2
+060369 T0015 LOG1 S0 Reset Election Timer
+060369 T0015 VOTE S0 -> S2, vote granted
+060369 T0015 VOTE S2 Vote from S1, total votes 2
+060369 T0015 LEAD S2 Candidate Become leader in T15
+060369 T0015 VOTE S2 Lost Context, abort RequestVoteReply from S0
+060370 T0015 VOTE S1 Received AppendEntries RPC, from S2,
+060370 T0015 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:6
+060370 T0015 LOG1 S2 -> S1 failed, set nextIndex from 7 to 6
+060370 T0015 VOTE S0 Received AppendEntries RPC, from S2,
+060370 T0015 LOG2 S0 <- S2, Append log success, (6,6]
+060370 T0015 LOG1 S0 Reset Election Timer
+060371 T0015 DBUG S2 Match index after sort: [0 0 6], majority[1]=0
+060596 T0015 LEAD S2 Leader accept Log, Index:7, T15
+061778 T0015 DBUG S1 Ask vote from S0, lost or error
+062378 T0015 VOTE S1 Received AppendEntries RPC, from S2,
+062379 T0015 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:5
+062380 T0015 LOG1 S2 -> S1 failed, set nextIndex from 6 to 5
+062379 T0015 VOTE S0 Received AppendEntries RPC, from S2,
+062380 T0015 LOG2 S0 <- S2, Append log success, (6,7]
+062380 T0015 LOG1 S0 Reset Election Timer
+062381 T0015 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+062381 T0015 APLY S2 Leader update commitIndex from 6 to 7
+062381 T0015 APLY S2 Apply log［7, 7］
+064392 T0015 VOTE S1 Received AppendEntries RPC, from S2,
+064392 T0015 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:4
+064394 T0015 LOG1 S2 -> S1 failed, set nextIndex from 5 to 4
+064392 T0015 VOTE S0 Received AppendEntries RPC, from S2,
+064394 T0015 LOG2 S0 <- S2, Append log success, (7,7]
+064394 T0015 APLY S0 Follower update commitIndex from 6 to 7
+064394 T0015 LOG1 S0 Reset Election Timer
+064395 T0015 APLY S0 Apply log［7, 7］
+064395 T0015 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+065451 T0015 LOG1 S1 Reset Election Timer
+065452 T0016 VOTE S1 Candidate->Candidate, For T16
+065452 T0016 DBUG S1 start election
+065456 T0015 VOTE S2 Received RequestVote RPC, from S1,
+065456 T0015 VOTE S0 Received RequestVote RPC, from S1,
+065456 T0015 LOG1 S2 Leader -> Follower, T15 -> T16
+065456 T0015 LOG1 S0 Follower -> Follower, T15 -> T16
+065456 T0016 VOTE S2 Compare last log, Me: [7]T15, Candidate: [1]T2
+065456 T0016 VOTE S0 Compare last log, Me: [7]T15, Candidate: [1]T2
+065456 T0016 VOTE S2 Reject vote, S1's log not up to date
+065456 T0016 VOTE S0 Reject vote, S1's log not up to date
+066179 T0016 LOG1 S2 Reset Election Timer
+066179 T0017 VOTE S2 Candidate->Candidate, For T17
+066180 T0017 DBUG S2 start election
+066182 T0016 VOTE S1 Received RequestVote RPC, from S2,
+066182 T0016 LOG1 S1 Candidate -> Follower, T16 -> T17
+066182 T0017 VOTE S1 Compare last log, Me: [1]T2, Candidate: [7]T15
+066182 T0017 LOG1 S1 Reset Election Timer
+066182 T0017 VOTE S1 -> S2, vote granted
+066183 T0017 VOTE S2 Vote from S1, total votes 2
+066183 T0017 LEAD S2 Candidate Become leader in T17
+066184 T0017 VOTE S1 Received AppendEntries RPC, from S2,
+066184 T0017 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:7
+066185 T0017 LOG1 S2 -> S1 failed, set nextIndex from 8 to 7
+066185 T0016 VOTE S0 Received RequestVote RPC, from S2,
+066185 T0016 LOG1 S0 Follower -> Follower, T16 -> T17
+066186 T0017 VOTE S0 Compare last log, Me: [7]T15, Candidate: [7]T15
+066186 T0017 LOG1 S0 Reset Election Timer
+066186 T0017 VOTE S0 -> S2, vote granted
+066186 T0017 VOTE S2 Lost Context, abort RequestVoteReply from S0
+066187 T0017 VOTE S0 Received AppendEntries RPC, from S2,
+066187 T0017 LOG2 S0 <- S2, Append log success, (7,7]
+066187 T0017 LOG1 S0 Reset Election Timer
+066187 T0017 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+066397 T0017 LOG1 S2 Context Lost leader[15] -> Leader[T17]
+068188 T0017 VOTE S0 Received AppendEntries RPC, from S2,
+068189 T0017 LOG2 S0 <- S2, Append log success, (7,7]
+068189 T0017 LOG1 S0 Reset Election Timer
+068190 T0017 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+068188 T0017 VOTE S1 Received AppendEntries RPC, from S2,
+068190 T0017 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:6
+068191 T0017 LOG1 S2 -> S1 failed, set nextIndex from 7 to 6
+068774 T0017 DBUG S1 Ask vote from S0, lost or error
+068832 T0017 LOG1 S0 -> S1, Context Lost, T2:Leader->T17:Follower
+069115 T0017 DBUG S1 Ask vote from S2, lost or error
+070110 T0017 DBUG S1 Ask vote from S0, lost or error
+070194 T0017 VOTE S1 Received AppendEntries RPC, from S2,
+070194 T0017 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:5
+070194 T0017 VOTE S0 Received AppendEntries RPC, from S2,
+070194 T0017 LOG2 S0 <- S2, Append log success, (7,7]
+070194 T0017 LOG1 S0 Reset Election Timer
+070194 T0017 LOG1 S2 -> S1 failed, set nextIndex from 6 to 5
+070194 T0017 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+070567 T0017 LOG1 S1 Reset Election Timer
+070567 T0018 VOTE S1 Candidate->Candidate, For T18
+070568 T0018 DBUG S1 start election
+070573 T0017 VOTE S2 Received RequestVote RPC, from S1,
+070573 T0017 LOG1 S2 Leader -> Follower, T17 -> T18
+070573 T0018 VOTE S2 Compare last log, Me: [7]T15, Candidate: [1]T2
+070573 T0018 VOTE S2 Reject vote, S1's log not up to date
+070577 T0017 VOTE S0 Received RequestVote RPC, from S1,
+070577 T0017 LOG1 S0 Follower -> Follower, T17 -> T18
+070577 T0018 VOTE S0 Compare last log, Me: [7]T15, Candidate: [1]T2
+070577 T0018 VOTE S0 Reject vote, S1's log not up to date
+071242 T0018 LOG1 S2 Reset Election Timer
+071243 T0019 VOTE S2 Candidate->Candidate, For T19
+071243 T0019 DBUG S2 start election
+071249 T0018 VOTE S1 Received RequestVote RPC, from S2,
+071250 T0018 LOG1 S1 Candidate -> Follower, T18 -> T19
+071249 T0018 VOTE S0 Received RequestVote RPC, from S2,
+071250 T0018 LOG1 S0 Follower -> Follower, T18 -> T19
+071250 T0019 VOTE S0 Compare last log, Me: [7]T15, Candidate: [7]T15
+071250 T0019 LOG1 S0 Reset Election Timer
+071250 T0019 VOTE S0 -> S2, vote granted
+071252 T0019 VOTE S2 Vote from S0, total votes 2
+071252 T0019 LEAD S2 Candidate Become leader in T19
+071250 T0019 VOTE S1 Compare last log, Me: [1]T2, Candidate: [7]T15
+071253 T0019 LOG1 S1 Reset Election Timer
+071253 T0019 VOTE S1 -> S2, vote granted
+071254 T0019 VOTE S1 Received AppendEntries RPC, from S2,
+071254 T0019 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:7
+071255 T0019 VOTE S2 Lost Context, abort RequestVoteReply from S1
+071256 T0019 LOG1 S2 -> S1 failed, set nextIndex from 8 to 7
+071257 T0019 VOTE S0 Received AppendEntries RPC, from S2,
+071257 T0019 LOG2 S0 <- S2, Append log success, (7,7]
+071257 T0019 LOG1 S0 Reset Election Timer
+071259 T0019 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+071890 T0019 DBUG S1 Ask vote from S0, lost or error
+072218 T0019 LOG1 S2 Context Lost leader[17] -> Leader[T19]
+072245 T0019 DBUG S1 Ask vote from S2, lost or error
+073267 T0019 VOTE S1 Received AppendEntries RPC, from S2,
+073267 T0019 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:6
+073268 T0019 LOG1 S2 -> S1 failed, set nextIndex from 7 to 6
+073267 T0019 VOTE S0 Received AppendEntries RPC, from S2,
+073268 T0019 LOG2 S0 <- S2, Append log success, (7,7]
+073268 T0019 LOG1 S0 Reset Election Timer
+073269 T0019 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+073879 T0019 LOG1 S0 -> S1, Context Lost, T2:Leader->T19:Follower
+075275 T0019 VOTE S0 Received AppendEntries RPC, from S2,
+075276 T0019 LOG2 S0 <- S2, Append log success, (7,7]
+075276 T0019 LOG1 S0 Reset Election Timer
+075276 T0019 VOTE S1 Received AppendEntries RPC, from S2,
+075276 T0019 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:5
+075277 T0019 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+075277 T0019 LOG1 S2 -> S1 failed, set nextIndex from 6 to 5
+076792 T0019 LOG1 S1 Reset Election Timer
+076792 T0020 VOTE S1 Candidate->Candidate, For T20
+076792 T0020 DBUG S1 start election
+076797 T0019 VOTE S2 Received RequestVote RPC, from S1,
+076797 T0019 LOG1 S2 Leader -> Follower, T19 -> T20
+076797 T0020 VOTE S2 Compare last log, Me: [7]T15, Candidate: [1]T2
+076797 T0020 VOTE S2 Reject vote, S1's log not up to date
+076799 T0019 VOTE S0 Received RequestVote RPC, from S1,
+076799 T0019 LOG1 S0 Follower -> Follower, T19 -> T20
+076799 T0020 VOTE S0 Compare last log, Me: [7]T15, Candidate: [1]T2
+076799 T0020 VOTE S0 Reject vote, S1's log not up to date
+077272 T0020 LOG1 S2 Context Lost leader[19] -> Follower[T20]
+077768 T0020 LOG1 S2 Reset Election Timer
+077769 T0021 VOTE S2 Candidate->Candidate, For T21
+077771 T0021 DBUG S2 start election
+077776 T0020 VOTE S1 Received RequestVote RPC, from S2,
+077776 T0020 LOG1 S1 Candidate -> Follower, T20 -> T21
+077776 T0021 VOTE S1 Compare last log, Me: [1]T2, Candidate: [7]T15
+077776 T0021 LOG1 S1 Reset Election Timer
+077776 T0021 VOTE S1 -> S2, vote granted
+077778 T0021 VOTE S2 Vote from S1, total votes 2
+077778 T0021 LEAD S2 Candidate Become leader in T21
+077797 T0021 VOTE S1 Received AppendEntries RPC, from S2,
+077797 T0021 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:7
+077798 T0021 LOG1 S2 -> S1 failed, set nextIndex from 8 to 7
+077799 T0020 VOTE S0 Received RequestVote RPC, from S2,
+077799 T0020 LOG1 S0 Follower -> Follower, T20 -> T21
+077799 T0021 VOTE S0 Compare last log, Me: [7]T15, Candidate: [7]T15
+077799 T0021 LOG1 S0 Reset Election Timer
+077799 T0021 VOTE S0 -> S2, vote granted
+077800 T0021 VOTE S2 Lost Context, abort RequestVoteReply from S0
+077801 T0021 VOTE S0 Received AppendEntries RPC, from S2,
+077801 T0021 LOG2 S0 <- S2, Append log success, (7,7]
+077801 T0021 LOG1 S0 Reset Election Timer
+077802 T0021 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+079807 T0021 VOTE S1 Received AppendEntries RPC, from S2,
+079808 T0021 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:6
+079809 T0021 LOG1 S2 -> S1 failed, set nextIndex from 7 to 6
+079807 T0021 VOTE S0 Received AppendEntries RPC, from S2,
+079809 T0021 LOG2 S0 <- S2, Append log success, (7,7]
+079809 T0021 LOG1 S0 Reset Election Timer
+079810 T0021 DBUG S2 Match index after sort: [0 7 7], majority[1]=7
+080743 T0021 LEAD S2 Leader accept Log, Index:8, T21
+080806 T0021 DBUG S1 Ask vote from S0, lost or error
+081098 T0021 LOG1 S0 -> S1, Context Lost, T2:Leader->T21:Follower
+081530 T0021 LOG1 S1 Reset Election Timer
+081531 T0022 VOTE S1 Candidate->Candidate, For T22
+081531 T0022 DBUG S1 start election
+081533 T0021 VOTE S2 Received RequestVote RPC, from S1,
+081533 T0021 LOG1 S2 Leader -> Follower, T21 -> T22
+081533 T0022 VOTE S2 Compare last log, Me: [8]T21, Candidate: [1]T2
+081534 T0022 VOTE S2 Reject vote, S1's log not up to date
+081533 T0021 VOTE S0 Received RequestVote RPC, from S1,
+081534 T0021 LOG1 S0 Follower -> Follower, T21 -> T22
+081534 T0022 VOTE S0 Compare last log, Me: [7]T15, Candidate: [1]T2
+081534 T0022 VOTE S0 Reject vote, S1's log not up to date
+081731 T0022 LOG1 S0 -> S1, Context Lost, T2:Leader->T22:Follower
+081805 T0022 LOG1 S2 Context Lost leader[21] -> Follower[T22]
+083349 T0022 LOG1 S2 Reset Election Timer
+083349 T0023 VOTE S2 Candidate->Candidate, For T23
+083350 T0023 DBUG S2 start election
+083352 T0022 VOTE S0 Received RequestVote RPC, from S2,
+083352 T0022 LOG1 S0 Follower -> Follower, T22 -> T23
+083352 T0023 VOTE S0 Compare last log, Me: [7]T15, Candidate: [8]T21
+083352 T0023 LOG1 S0 Reset Election Timer
+083352 T0023 VOTE S0 -> S2, vote granted
+083353 T0023 VOTE S2 Vote from S0, total votes 2
+083353 T0023 LEAD S2 Candidate Become leader in T23
+083353 T0022 VOTE S1 Received RequestVote RPC, from S2,
+083354 T0022 LOG1 S1 Candidate -> Follower, T22 -> T23
+083354 T0023 VOTE S1 Compare last log, Me: [1]T2, Candidate: [8]T21
+083354 T0023 LOG1 S1 Reset Election Timer
+083354 T0023 VOTE S1 -> S2, vote granted
+083354 T0023 VOTE S1 Received AppendEntries RPC, from S2,
+083354 T0023 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:8
+083354 T0023 VOTE S2 Lost Context, abort RequestVoteReply from S1
+083354 T0023 LOG1 S2 -> S1 failed, set nextIndex from 9 to 8
+083356 T0023 VOTE S0 Received AppendEntries RPC, from S2,
+083356 T0023 LOG2 S0 <-2, Reject append log, no entry at preLogIndex:8
+083356 T0023 LOG1 S2 -> S0 failed, set nextIndex from 9 to 8
+085356 T0023 VOTE S1 Received AppendEntries RPC, from S2,
+085356 T0023 LOG2 S1 <-2, Reject append log, no entry at preLogIndex:7
+085356 T0023 VOTE S0 Received AppendEntries RPC, from S2,
+085357 T0023 LOG1 S2 -> S1 failed, set nextIndex from 8 to 7
+085357 T0023 LOG2 S0 <- S2, Append log success, (7,8]
+085359 T0023 LOG1 S0 Reset Election Timer
+085360 T0023 DBUG S2 Match index after sort: [0 8 8], majority[1]=8
+085360 T0023 APLY S2 Leader update commitIndex from 7 to 8
+085360 T0023 APLY S2 Apply log［8, 8］
+087233 T0023 LOG1 S1 Reset Election Timer
+087234 T0024 VOTE S1 Candidate->Candidate, For T24
+087234 T0024 DBUG S1 start election
+087238 T0023 VOTE S2 Received RequestVote RPC, from S1,
+087238 T0023 LOG1 S2 Leader -> Follower, T23 -> T24
+087238 T0024 VOTE S2 Compare last log, Me: [8]T21, Candidate: [1]T2
+087238 T0024 VOTE S2 Reject vote, S1's log not up to date
+087241 T0023 VOTE S0 Received RequestVote RPC, from S1,
+087241 T0023 LOG1 S0 Follower -> Follower, T23 -> T24
+087241 T0024 VOTE S0 Compare last log, Me: [8]T21, Candidate: [1]T2
+087241 T0024 VOTE S0 Reject vote, S1's log not up to date
+087365 T0024 LOG1 S2 Context Lost leader[23] -> Follower[T24]
+090229 T0024 LOG1 S0 Reset Election Timer
+090229 T0025 VOTE S0 Candidate->Candidate, For T25
+090230 T0025 DBUG S0 start election
+090233 T0024 VOTE S2 Received RequestVote RPC, from S0,
+090233 T0024 VOTE S1 Received RequestVote RPC, from S0,
+090233 T0024 LOG1 S1 Candidate -> Follower, T24 -> T25
+090234 T0025 VOTE S1 Compare last log, Me: [1]T2, Candidate: [8]T21
+090234 T0025 LOG1 S1 Reset Election Timer
+090234 T0025 VOTE S1 -> S0, vote granted
+090234 T0025 VOTE S0 Vote from S1, total votes 2
+090235 T0025 LEAD S0 Candidate Become leader in T25
+090233 T0024 LOG1 S2 Follower -> Follower, T24 -> T25
+090236 T0025 VOTE S2 Compare last log, Me: [8]T21, Candidate: [8]T21
+090236 T0025 LOG1 S2 Reset Election Timer
+090236 T0025 VOTE S2 -> S0, vote granted
+090236 T0025 VOTE S2 Received AppendEntries RPC, from S0,
+090236 T0025 LOG2 S2 <- S0, Append log success, (8,8]
+090236 T0025 LOG1 S2 Reset Election Timer
+090237 T0025 DBUG S0 Match index after sort: [0 6 8], majority[1]=6
+090237 T0025 VOTE S0 Lost Context, abort RequestVoteReply from S2
+090238 T0025 VOTE S1 Received AppendEntries RPC, from S0,
+090238 T0025 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+090239 T0025 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+092247 T0025 VOTE S2 Received AppendEntries RPC, from S0,
+092247 T0025 LOG2 S2 <- S0, Append log success, (8,8]
+092247 T0025 LOG1 S2 Reset Election Timer
+092249 T0025 DBUG S0 Match index after sort: [0 6 8], majority[1]=6
+092247 T0025 VOTE S1 Received AppendEntries RPC, from S0,
+092249 T0025 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+092250 T0025 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+094258 T0025 VOTE S2 Received AppendEntries RPC, from S0,
+094259 T0025 LOG2 S2 <- S0, Append log success, (8,8]
+094259 T0025 LOG1 S2 Reset Election Timer
+094260 T0025 DBUG S0 Match index after sort: [0 6 8], majority[1]=6
+094258 T0025 VOTE S1 Received AppendEntries RPC, from S0,
+094260 T0025 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:6
+094261 T0025 LOG1 S0 -> S1 failed, set nextIndex from 7 to 6
+094869 T0025 LOG1 S0 -> S1, Context Lost, T2:Leader->T25:Leader
+095155 T0025 LOG1 S1 Reset Election Timer
+095156 T0026 VOTE S1 Candidate->Candidate, For T26
+095156 T0026 DBUG S1 start election
+095159 T0025 VOTE S2 Received RequestVote RPC, from S1,
+095159 T0025 LOG1 S2 Follower -> Follower, T25 -> T26
+095159 T0026 VOTE S2 Compare last log, Me: [8]T21, Candidate: [1]T2
+095160 T0026 VOTE S2 Reject vote, S1's log not up to date
+095159 T0025 VOTE S0 Received RequestVote RPC, from S1,
+095160 T0025 LOG1 S0 Leader -> Follower, T25 -> T26
+095160 T0026 VOTE S0 Compare last log, Me: [8]T21, Candidate: [1]T2
+095160 T0026 VOTE S0 Reject vote, S1's log not up to date
+095588 T0026 LOG1 S0 Reset Election Timer
+095589 T0027 VOTE S0 Candidate->Candidate, For T27
+095589 T0027 DBUG S0 start election
+095592 T0026 VOTE S2 Received RequestVote RPC, from S0,
+095592 T0026 LOG1 S2 Follower -> Follower, T26 -> T27
+095592 T0027 VOTE S2 Compare last log, Me: [8]T21, Candidate: [8]T21
+095592 T0027 LOG1 S2 Reset Election Timer
+095592 T0027 VOTE S2 -> S0, vote granted
+095592 T0026 VOTE S1 Received RequestVote RPC, from S0,
+095593 T0026 LOG1 S1 Candidate -> Follower, T26 -> T27
+095593 T0027 VOTE S1 Compare last log, Me: [1]T2, Candidate: [8]T21
+095593 T0027 LOG1 S1 Reset Election Timer
+095593 T0027 VOTE S1 -> S0, vote granted
+095593 T0027 VOTE S0 Vote from S2, total votes 2
+095593 T0027 LEAD S0 Candidate Become leader in T27
+095593 T0027 VOTE S0 Lost Context, abort RequestVoteReply from S1
+095596 T0027 VOTE S2 Received AppendEntries RPC, from S0,
+095596 T0027 LOG2 S2 <- S0, Append log success, (8,8]
+095596 T0027 LOG1 S2 Reset Election Timer
+095597 T0027 DBUG S0 Match index after sort: [0 6 8], majority[1]=6
+095598 T0027 VOTE S1 Received AppendEntries RPC, from S0,
+095598 T0027 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+095599 T0027 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+096287 T0027 LOG1 S0 Context Lost leader[25] -> Leader[T27]
+097604 T0027 VOTE S1 Received AppendEntries RPC, from S0,
+097605 T0027 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+097606 T0027 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+097606 T0027 VOTE S2 Received AppendEntries RPC, from S0,
+097607 T0027 LOG2 S2 <- S0, Append log success, (8,8]
+097607 T0027 LOG1 S2 Reset Election Timer
+097607 T0027 DBUG S0 Match index after sort: [0 6 8], majority[1]=6
+099579 T0027 LOG1 S1 Reset Election Timer
+099580 T0028 VOTE S1 Candidate->Candidate, For T28
+099580 T0028 DBUG S1 start election
+099587 T0027 VOTE S2 Received RequestVote RPC, from S1,
+099587 T0027 LOG1 S2 Follower -> Follower, T27 -> T28
+099587 T0028 VOTE S2 Compare last log, Me: [8]T21, Candidate: [1]T2
+099587 T0028 VOTE S2 Reject vote, S1's log not up to date
+099587 T0027 VOTE S0 Received RequestVote RPC, from S1,
+099587 T0027 LOG1 S0 Leader -> Follower, T27 -> T28
+099588 T0028 VOTE S0 Compare last log, Me: [8]T21, Candidate: [1]T2
+099588 T0028 VOTE S0 Reject vote, S1's log not up to date
+099602 T0028 LOG1 S0 Context Lost leader[27] -> Follower[T28]
+099896 T0028 LOG1 S0 Reset Election Timer
+099897 T0029 VOTE S0 Candidate->Candidate, For T29
+099897 T0029 DBUG S0 start election
+099899 T0028 VOTE S2 Received RequestVote RPC, from S0,
+099900 T0028 LOG1 S2 Follower -> Follower, T28 -> T29
+099900 T0029 VOTE S2 Compare last log, Me: [8]T21, Candidate: [8]T21
+099900 T0029 LOG1 S2 Reset Election Timer
+099900 T0029 VOTE S2 -> S0, vote granted
+099900 T0028 VOTE S1 Received RequestVote RPC, from S0,
+099900 T0028 LOG1 S1 Candidate -> Follower, T28 -> T29
+099900 T0029 VOTE S1 Compare last log, Me: [1]T2, Candidate: [8]T21
+099900 T0029 LOG1 S1 Reset Election Timer
+099900 T0029 VOTE S1 -> S0, vote granted
+099901 T0029 VOTE S0 Vote from S2, total votes 2
+099901 T0029 LEAD S0 Candidate Become leader in T29
+099901 T0029 VOTE S0 Lost Context, abort RequestVoteReply from S1
+099902 T0029 VOTE S2 Received AppendEntries RPC, from S0,
+099902 T0029 LOG2 S2 <- S0, Append log success, (8,8]
+099902 T0029 LOG1 S2 Reset Election Timer
+099903 T0029 DBUG S0 Match index after sort: [0 6 8], majority[1]=6
+099904 T0029 VOTE S1 Received AppendEntries RPC, from S0,
+099904 T0029 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+099904 T0029 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+100918 T0029 LEAD S0 Leader accept Log, Index:9, T29
+101915 T0029 VOTE S2 Received AppendEntries RPC, from S0,
+101915 T0029 LOG2 S2 <- S0, Append log success, (8,9]
+101915 T0029 LOG1 S2 Reset Election Timer
+101917 T0029 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+101917 T0029 APLY S0 Leader update commitIndex from 7 to 9
+101917 T0029 APLY S0 Apply log［8, 9］
+101915 T0029 VOTE S1 Received AppendEntries RPC, from S0,
+101917 T0029 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+101919 T0029 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+102672 T0029 DBUG S1 Ask vote from S2, lost or error
+103051 T0029 LOG1 S1 Reset Election Timer
+103052 T0030 VOTE S1 Candidate->Candidate, For T30
+103052 T0030 DBUG S1 start election
+103056 T0029 VOTE S0 Received RequestVote RPC, from S1,
+103056 T0029 LOG1 S0 Leader -> Follower, T29 -> T30
+103056 T0030 VOTE S0 Compare last log, Me: [9]T29, Candidate: [1]T2
+103056 T0030 VOTE S0 Reject vote, S1's log not up to date
+103057 T0029 VOTE S2 Received RequestVote RPC, from S1,
+103057 T0029 LOG1 S2 Follower -> Follower, T29 -> T30
+103057 T0030 VOTE S2 Compare last log, Me: [9]T29, Candidate: [1]T2
+103057 T0030 VOTE S2 Reject vote, S1's log not up to date
+103240 T0030 LOG1 S0 Reset Election Timer
+103240 T0031 VOTE S0 Candidate->Candidate, For T31
+103241 T0031 DBUG S0 start election
+103242 T0030 VOTE S2 Received RequestVote RPC, from S0,
+103243 T0030 LOG1 S2 Follower -> Follower, T30 -> T31
+103243 T0031 VOTE S2 Compare last log, Me: [9]T29, Candidate: [9]T29
+103243 T0031 LOG1 S2 Reset Election Timer
+103243 T0031 VOTE S2 -> S0, vote granted
+103243 T0030 VOTE S1 Received RequestVote RPC, from S0,
+103243 T0030 LOG1 S1 Candidate -> Follower, T30 -> T31
+103243 T0031 VOTE S1 Compare last log, Me: [1]T2, Candidate: [9]T29
+103243 T0031 LOG1 S1 Reset Election Timer
+103243 T0031 VOTE S1 -> S0, vote granted
+103243 T0031 VOTE S0 Vote from S2, total votes 2
+103243 T0031 LEAD S0 Candidate Become leader in T31
+103243 T0031 VOTE S0 Lost Context, abort RequestVoteReply from S1
+103244 T0031 VOTE S1 Received AppendEntries RPC, from S0,
+103244 T0031 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+103245 T0031 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+103246 T0031 VOTE S2 Received AppendEntries RPC, from S0,
+103246 T0031 LOG2 S2 <- S0, Append log success, (9,9]
+103246 T0031 APLY S2 Follower update commitIndex from 8 to 9
+103246 T0031 LOG1 S2 Reset Election Timer
+103247 T0031 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+103247 T0031 APLY S2 Apply log［9, 9］
+103916 T0031 LOG1 S0 Context Lost leader[29] -> Leader[T31]
+105259 T0031 VOTE S1 Received AppendEntries RPC, from S0,
+105260 T0031 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+105259 T0031 VOTE S2 Received AppendEntries RPC, from S0,
+105260 T0031 LOG2 S2 <- S0, Append log success, (9,9]
+105260 T0031 LOG1 S2 Reset Election Timer
+105261 T0031 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+105261 T0031 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+107268 T0031 VOTE S2 Received AppendEntries RPC, from S0,
+107268 T0031 LOG2 S2 <- S0, Append log success, (9,9]
+107268 T0031 LOG1 S2 Reset Election Timer
+107270 T0031 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+107268 T0031 VOTE S1 Received AppendEntries RPC, from S0,
+107270 T0031 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+107272 T0031 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+108549 T0031 LOG1 S0 -> S1, Context Lost, T2:Leader->T31:Leader
+108787 T0031 LOG1 S1 Reset Election Timer
+108787 T0032 VOTE S1 Candidate->Candidate, For T32
+108788 T0032 DBUG S1 start election
+108792 T0031 VOTE S2 Received RequestVote RPC, from S1,
+108792 T0031 LOG1 S2 Follower -> Follower, T31 -> T32
+108792 T0032 VOTE S2 Compare last log, Me: [9]T29, Candidate: [1]T2
+108792 T0032 VOTE S2 Reject vote, S1's log not up to date
+108792 T0031 VOTE S0 Received RequestVote RPC, from S1,
+108792 T0031 LOG1 S0 Leader -> Follower, T31 -> T32
+108792 T0032 VOTE S0 Compare last log, Me: [9]T29, Candidate: [1]T2
+108792 T0032 VOTE S0 Reject vote, S1's log not up to date
+109266 T0032 LOG1 S0 Context Lost leader[31] -> Follower[T32]
+109778 T0032 LOG1 S0 Reset Election Timer
+109779 T0033 VOTE S0 Candidate->Candidate, For T33
+109779 T0033 DBUG S0 start election
+109791 T0032 VOTE S2 Received RequestVote RPC, from S0,
+109791 T0032 LOG1 S2 Follower -> Follower, T32 -> T33
+109791 T0033 VOTE S2 Compare last log, Me: [9]T29, Candidate: [9]T29
+109792 T0033 LOG1 S2 Reset Election Timer
+109792 T0033 VOTE S2 -> S0, vote granted
+109798 T0033 VOTE S0 Vote from S2, total votes 2
+109798 T0033 LEAD S0 Candidate Become leader in T33
+109800 T0033 VOTE S2 Received AppendEntries RPC, from S0,
+109800 T0033 LOG2 S2 <- S0, Append log success, (9,9]
+109801 T0033 LOG1 S2 Reset Election Timer
+109802 T0033 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+109802 T0032 VOTE S1 Received RequestVote RPC, from S0,
+109802 T0032 LOG1 S1 Candidate -> Follower, T32 -> T33
+109802 T0033 VOTE S1 Compare last log, Me: [1]T2, Candidate: [9]T29
+109802 T0033 LOG1 S1 Reset Election Timer
+109802 T0033 VOTE S1 -> S0, vote granted
+109804 T0033 VOTE S0 Lost Context, abort RequestVoteReply from S1
+109813 T0033 VOTE S1 Received AppendEntries RPC, from S0,
+109813 T0033 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+109814 T0033 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+111803 T0033 VOTE S2 Received AppendEntries RPC, from S0,
+111803 T0033 LOG2 S2 <- S0, Append log success, (9,9]
+111803 T0033 LOG1 S2 Reset Election Timer
+111804 T0033 VOTE S1 Received AppendEntries RPC, from S0,
+111804 T0033 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+111804 T0033 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+111805 T0033 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+113814 T0033 VOTE S1 Received AppendEntries RPC, from S0,
+113815 T0033 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+113816 T0033 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+113814 T0033 VOTE S2 Received AppendEntries RPC, from S0,
+113816 T0033 LOG2 S2 <- S0, Append log success, (9,9]
+113816 T0033 LOG1 S2 Reset Election Timer
+113817 T0033 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+114057 T0033 LOG1 S1 Reset Election Timer
+114057 T0034 VOTE S1 Candidate->Candidate, For T34
+114057 T0034 DBUG S1 start election
+114059 T0033 VOTE S2 Received RequestVote RPC, from S1,
+114059 T0033 LOG1 S2 Follower -> Follower, T33 -> T34
+114059 T0034 VOTE S2 Compare last log, Me: [9]T29, Candidate: [1]T2
+114059 T0034 VOTE S2 Reject vote, S1's log not up to date
+114059 T0033 VOTE S0 Received RequestVote RPC, from S1,
+114060 T0033 LOG1 S0 Leader -> Follower, T33 -> T34
+114060 T0034 VOTE S0 Compare last log, Me: [9]T29, Candidate: [1]T2
+114060 T0034 VOTE S0 Reject vote, S1's log not up to date
+114967 T0034 LOG1 S0 Reset Election Timer
+114967 T0035 VOTE S0 Candidate->Candidate, For T35
+114968 T0035 DBUG S0 start election
+114977 T0034 VOTE S1 Received RequestVote RPC, from S0,
+114977 T0034 LOG1 S1 Candidate -> Follower, T34 -> T35
+114977 T0035 VOTE S1 Compare last log, Me: [1]T2, Candidate: [9]T29
+114977 T0035 LOG1 S1 Reset Election Timer
+114977 T0035 VOTE S1 -> S0, vote granted
+114978 T0034 VOTE S2 Received RequestVote RPC, from S0,
+114978 T0035 VOTE S0 Vote from S1, total votes 2
+114978 T0034 LOG1 S2 Follower -> Follower, T34 -> T35
+114979 T0035 VOTE S2 Compare last log, Me: [9]T29, Candidate: [9]T29
+114979 T0035 LOG1 S2 Reset Election Timer
+114979 T0035 VOTE S2 -> S0, vote granted
+114978 T0035 LEAD S0 Candidate Become leader in T35
+114981 T0035 VOTE S0 Lost Context, abort RequestVoteReply from S2
+114982 T0035 VOTE S2 Received AppendEntries RPC, from S0,
+114982 T0035 LOG2 S2 <- S0, Append log success, (9,9]
+114982 T0035 LOG1 S2 Reset Election Timer
+114983 T0035 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+114984 T0035 VOTE S1 Received AppendEntries RPC, from S0,
+114984 T0035 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+114985 T0035 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+115813 T0035 LOG1 S0 Context Lost leader[33] -> Leader[T35]
+116996 T0035 VOTE S2 Received AppendEntries RPC, from S0,
+116996 T0035 LOG2 S2 <- S0, Append log success, (9,9]
+116996 T0035 LOG1 S2 Reset Election Timer
+116998 T0035 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+117000 T0035 VOTE S1 Received AppendEntries RPC, from S0,
+117000 T0035 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+117001 T0035 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+119003 T0035 VOTE S2 Received AppendEntries RPC, from S0,
+119004 T0035 LOG2 S2 <- S0, Append log success, (9,9]
+119004 T0035 LOG1 S2 Reset Election Timer
+119003 T0035 VOTE S1 Received AppendEntries RPC, from S0,
+119004 T0035 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+119005 T0035 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+119005 T0035 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+119892 T0035 LOG1 S1 Reset Election Timer
+119893 T0036 VOTE S1 Candidate->Candidate, For T36
+119893 T0036 DBUG S1 start election
+119897 T0035 VOTE S2 Received RequestVote RPC, from S1,
+119897 T0035 VOTE S0 Received RequestVote RPC, from S1,
+119897 T0035 LOG1 S2 Follower -> Follower, T35 -> T36
+119897 T0035 LOG1 S0 Leader -> Follower, T35 -> T36
+119897 T0036 VOTE S2 Compare last log, Me: [9]T29, Candidate: [1]T2
+119897 T0036 VOTE S0 Compare last log, Me: [9]T29, Candidate: [1]T2
+119898 T0036 VOTE S2 Reject vote, S1's log not up to date
+119898 T0036 VOTE S0 Reject vote, S1's log not up to date
+120661 T0036 LOG1 S0 Reset Election Timer
+120662 T0037 VOTE S0 Candidate->Candidate, For T37
+120662 T0037 DBUG S0 start election
+120667 T0036 VOTE S2 Received RequestVote RPC, from S0,
+120667 T0036 LOG1 S2 Follower -> Follower, T36 -> T37
+120667 T0037 VOTE S2 Compare last log, Me: [9]T29, Candidate: [9]T29
+120667 T0037 LOG1 S2 Reset Election Timer
+120667 T0037 VOTE S2 -> S0, vote granted
+120668 T0037 VOTE S0 Vote from S2, total votes 2
+120668 T0037 LEAD S0 Candidate Become leader in T37
+120671 T0037 VOTE S2 Received AppendEntries RPC, from S0,
+120671 T0037 LOG2 S2 <- S0, Append log success, (9,9]
+120671 T0037 LOG1 S2 Reset Election Timer
+120673 T0037 DBUG S0 Match index after sort: [0 9 9], majority[1]=9
+120674 T0036 VOTE S1 Received AppendEntries RPC, from S0,
+120674 T0036 LOG1 S1 AppendEntries Handler: Become follower
+120674 T0036 LOG1 S1 Candidate -> Follower, T36 -> T37
+120674 T0037 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+120675 T0037 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+120677 T0037 VOTE S1 Received RequestVote RPC, from S0,
+120677 T0037 VOTE S1 Compare last log, Me: [1]T2, Candidate: [9]T29
+120677 T0037 LOG1 S1 Reset Election Timer
+120677 T0037 VOTE S1 -> S0, vote granted
+120678 T0037 VOTE S0 Lost Context, abort RequestVoteReply from S1
+121000 T0037 LEAD S0 Leader accept Log, Index:10, T37
+121001 T0037 LOG1 S0 Context Lost leader[35] -> Leader[T37]
+122680 T0037 VOTE S2 Received AppendEntries RPC, from S0,
+122681 T0037 LOG2 S2 <- S0, Append log success, (9,10]
+122681 T0037 LOG1 S2 Reset Election Timer
+122681 T0037 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+122682 T0037 APLY S0 Leader update commitIndex from 9 to 10
+122682 T0037 APLY S0 Apply log［10, 10］
+122682 T0037 VOTE S1 Received AppendEntries RPC, from S0,
+122682 T0037 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+122683 T0037 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+124685 T0037 VOTE S2 Received AppendEntries RPC, from S0,
+124686 T0037 LOG2 S2 <- S0, Append log success, (10,10]
+124686 T0037 VOTE S1 Received AppendEntries RPC, from S0,
+124686 T0037 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+124686 T0037 APLY S2 Follower update commitIndex from 9 to 10
+124686 T0037 LOG1 S2 Reset Election Timer
+124687 T0037 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+124687 T0037 APLY S2 Apply log［10, 10］
+124687 T0037 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+125316 T0037 LOG1 S1 Reset Election Timer
+125317 T0038 VOTE S1 Candidate->Candidate, For T38
+125317 T0038 DBUG S1 start election
+125321 T0037 VOTE S2 Received RequestVote RPC, from S1,
+125321 T0037 LOG1 S2 Follower -> Follower, T37 -> T38
+125321 T0038 VOTE S2 Compare last log, Me: [10]T37, Candidate: [1]T2
+125321 T0038 VOTE S2 Reject vote, S1's log not up to date
+125321 T0037 VOTE S0 Received RequestVote RPC, from S1,
+125321 T0037 LOG1 S0 Leader -> Follower, T37 -> T38
+125321 T0038 VOTE S0 Compare last log, Me: [10]T37, Candidate: [1]T2
+125321 T0038 VOTE S0 Reject vote, S1's log not up to date
+125865 T0038 LOG1 S0 Reset Election Timer
+125866 T0039 VOTE S0 Candidate->Candidate, For T39
+125866 T0039 DBUG S0 start election
+125870 T0038 VOTE S2 Received RequestVote RPC, from S0,
+125871 T0038 LOG1 S2 Follower -> Follower, T38 -> T39
+125871 T0039 VOTE S2 Compare last log, Me: [10]T37, Candidate: [10]T37
+125871 T0039 LOG1 S2 Reset Election Timer
+125871 T0039 VOTE S2 -> S0, vote granted
+125872 T0039 VOTE S0 Vote from S2, total votes 2
+125872 T0039 LEAD S0 Candidate Become leader in T39
+125874 T0039 VOTE S2 Received AppendEntries RPC, from S0,
+125874 T0039 LOG2 S2 <- S0, Append log success, (10,10]
+125874 T0039 LOG1 S2 Reset Election Timer
+125875 T0039 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+125876 T0038 VOTE S1 Received RequestVote RPC, from S0,
+125876 T0038 LOG1 S1 Candidate -> Follower, T38 -> T39
+125876 T0039 VOTE S1 Compare last log, Me: [1]T2, Candidate: [10]T37
+125876 T0039 LOG1 S1 Reset Election Timer
+125876 T0039 VOTE S1 -> S0, vote granted
+125876 T0039 VOTE S0 Lost Context, abort RequestVoteReply from S1
+125877 T0039 VOTE S1 Received AppendEntries RPC, from S0,
+125877 T0039 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:10
+125878 T0039 LOG1 S0 -> S1 failed, set nextIndex from 11 to 10
+126690 T0039 LOG1 S0 Context Lost leader[37] -> Leader[T39]
+127888 T0039 VOTE S1 Received AppendEntries RPC, from S0,
+127889 T0039 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+127890 T0039 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+127888 T0039 VOTE S2 Received AppendEntries RPC, from S0,
+127890 T0039 LOG2 S2 <- S0, Append log success, (10,10]
+127890 T0039 LOG1 S2 Reset Election Timer
+127891 T0039 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+129897 T0039 VOTE S2 Received AppendEntries RPC, from S0,
+129898 T0039 LOG2 S2 <- S0, Append log success, (10,10]
+129898 T0039 LOG1 S2 Reset Election Timer
+129899 T0039 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+129897 T0039 VOTE S1 Received AppendEntries RPC, from S0,
+129900 T0039 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+129901 T0039 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+131900 T0039 VOTE S1 Received AppendEntries RPC, from S0,
+131901 T0039 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:7
+131903 T0039 LOG1 S0 -> S1 failed, set nextIndex from 8 to 7
+131900 T0039 VOTE S2 Received AppendEntries RPC, from S0,
+131903 T0039 LOG2 S2 <- S0, Append log success, (10,10]
+131903 T0039 LOG1 S2 Reset Election Timer
+131904 T0039 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+132576 T0039 LOG1 S1 Reset Election Timer
+132577 T0040 VOTE S1 Candidate->Candidate, For T40
+132577 T0040 DBUG S1 start election
+132585 T0039 VOTE S0 Received RequestVote RPC, from S1,
+132585 T0039 LOG1 S0 Leader -> Follower, T39 -> T40
+132585 T0040 VOTE S0 Compare last log, Me: [10]T37, Candidate: [1]T2
+132585 T0040 VOTE S0 Reject vote, S1's log not up to date
+132587 T0039 VOTE S2 Received RequestVote RPC, from S1,
+132587 T0039 LOG1 S2 Follower -> Follower, T39 -> T40
+132587 T0040 VOTE S2 Compare last log, Me: [10]T37, Candidate: [1]T2
+132587 T0040 VOTE S2 Reject vote, S1's log not up to date
+133630 T0040 LOG1 S0 Reset Election Timer
+133631 T0041 VOTE S0 Candidate->Candidate, For T41
+133631 T0041 DBUG S0 start election
+133643 T0040 VOTE S2 Received RequestVote RPC, from S0,
+133643 T0040 LOG1 S2 Follower -> Follower, T40 -> T41
+133643 T0041 VOTE S2 Compare last log, Me: [10]T37, Candidate: [10]T37
+133643 T0041 LOG1 S2 Reset Election Timer
+133643 T0041 VOTE S2 -> S0, vote granted
+133644 T0041 VOTE S0 Vote from S2, total votes 2
+133644 T0041 LEAD S0 Candidate Become leader in T41
+133646 T0041 VOTE S2 Received AppendEntries RPC, from S0,
+133646 T0041 LOG2 S2 <- S0, Append log success, (10,10]
+133646 T0041 LOG1 S2 Reset Election Timer
+133648 T0041 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+133648 T0040 VOTE S1 Received RequestVote RPC, from S0,
+133648 T0040 LOG1 S1 Candidate -> Follower, T40 -> T41
+133648 T0041 VOTE S1 Compare last log, Me: [1]T2, Candidate: [10]T37
+133648 T0041 LOG1 S1 Reset Election Timer
+133648 T0041 VOTE S1 -> S0, vote granted
+133649 T0041 VOTE S0 Lost Context, abort RequestVoteReply from S1
+133650 T0041 VOTE S1 Received AppendEntries RPC, from S0,
+133650 T0041 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:10
+133651 T0041 LOG1 S0 -> S1 failed, set nextIndex from 11 to 10
+133897 T0041 LOG1 S0 Context Lost leader[39] -> Leader[T41]
+135650 T0041 VOTE S2 Received AppendEntries RPC, from S0,
+135650 T0041 LOG2 S2 <- S0, Append log success, (10,10]
+135650 T0041 LOG1 S2 Reset Election Timer
+135651 T0041 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+135650 T0041 VOTE S1 Received AppendEntries RPC, from S0,
+135651 T0041 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+135652 T0041 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+137658 T0041 VOTE S2 Received AppendEntries RPC, from S0,
+137659 T0041 LOG2 S2 <- S0, Append log success, (10,10]
+137659 T0041 LOG1 S2 Reset Election Timer
+137661 T0041 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+137658 T0041 VOTE S1 Received AppendEntries RPC, from S0,
+137661 T0041 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:8
+137662 T0041 LOG1 S0 -> S1 failed, set nextIndex from 9 to 8
+137742 T0041 LOG1 S1 Reset Election Timer
+137743 T0042 VOTE S1 Candidate->Candidate, For T42
+137743 T0042 DBUG S1 start election
+137746 T0041 VOTE S2 Received RequestVote RPC, from S1,
+137746 T0041 LOG1 S2 Follower -> Follower, T41 -> T42
+137746 T0042 VOTE S2 Compare last log, Me: [10]T37, Candidate: [1]T2
+137746 T0042 VOTE S2 Reject vote, S1's log not up to date
+137748 T0041 VOTE S0 Received RequestVote RPC, from S1,
+137748 T0041 LOG1 S0 Leader -> Follower, T41 -> T42
+137748 T0042 VOTE S0 Compare last log, Me: [10]T37, Candidate: [1]T2
+137748 T0042 VOTE S0 Reject vote, S1's log not up to date
+138755 T0042 LOG1 S0 Reset Election Timer
+138756 T0043 VOTE S0 Candidate->Candidate, For T43
+138757 T0043 DBUG S0 start election
+138762 T0042 VOTE S1 Received RequestVote RPC, from S0,
+138762 T0042 LOG1 S1 Candidate -> Follower, T42 -> T43
+138762 T0043 VOTE S1 Compare last log, Me: [1]T2, Candidate: [10]T37
+138762 T0043 LOG1 S1 Reset Election Timer
+138762 T0043 VOTE S1 -> S0, vote granted
+138763 T0043 VOTE S0 Vote from S1, total votes 2
+138763 T0043 LEAD S0 Candidate Become leader in T43
+138764 T0042 VOTE S2 Received RequestVote RPC, from S0,
+138764 T0042 LOG1 S2 Follower -> Follower, T42 -> T43
+138764 T0043 VOTE S2 Compare last log, Me: [10]T37, Candidate: [10]T37
+138764 T0043 LOG1 S2 Reset Election Timer
+138764 T0043 VOTE S2 -> S0, vote granted
+138765 T0043 VOTE S2 Received AppendEntries RPC, from S0,
+138765 T0043 LOG2 S2 <- S0, Append log success, (10,10]
+138765 T0043 VOTE S0 Lost Context, abort RequestVoteReply from S2
+138765 T0043 LOG1 S2 Reset Election Timer
+138766 T0043 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+138767 T0043 VOTE S1 Received AppendEntries RPC, from S0,
+138767 T0043 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:10
+138767 T0043 LOG1 S0 -> S1 failed, set nextIndex from 11 to 10
+139663 T0043 LOG1 S0 Context Lost leader[41] -> Leader[T43]
+140773 T0043 VOTE S1 Received AppendEntries RPC, from S0,
+140773 T0043 LOG2 S1 <-0, Reject append log, no entry at preLogIndex:9
+140775 T0043 LOG1 S0 -> S1 failed, set nextIndex from 10 to 9
+140773 T0043 VOTE S2 Received AppendEntries RPC, from S0,
+140775 T0043 LOG2 S2 <- S0, Append log success, (10,10]
+140775 T0043 LOG1 S2 Reset Election Timer
+140776 T0043 DBUG S0 Match index after sort: [0 10 10], majority[1]=10
+--- FAIL: TestFailAgree3B (14.12s)
+    config.go:601: one(106) failed to reach agreement
+FAIL
+exit status 1
+FAIL	6.5840/raft	15.191s
