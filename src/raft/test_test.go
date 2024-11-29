@@ -939,6 +939,7 @@ func TestFigure8Unreliable3C(t *testing.T) {
 
 		if leader != -1 && (rand.Int()%1000) < int(RaftElectionTimeout/time.Millisecond)/2 {
 			cfg.disconnect(leader)
+			LOG(servers, 0, DDrop, "disconnect S%d", leader)
 			nup -= 1
 		}
 
@@ -946,6 +947,7 @@ func TestFigure8Unreliable3C(t *testing.T) {
 			s := rand.Int() % servers
 			if cfg.connected[s] == false {
 				cfg.connect(s)
+				LOG(servers, 0, DDrop, "re-connect S%d", s)
 				nup += 1
 			}
 		}
@@ -954,6 +956,7 @@ func TestFigure8Unreliable3C(t *testing.T) {
 	for i := 0; i < servers; i++ {
 		if cfg.connected[i] == false {
 			cfg.connect(i)
+			LOG(servers, 0, DDrop, "re-connect S%d", i)
 		}
 	}
 

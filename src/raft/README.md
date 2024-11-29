@@ -73,3 +73,11 @@ PASS
 ok      6.5840/raft     85.311s
 ```
 
+# Lab 3C
+
+### bug1 TestFigure8Unreliable3C
+
+
+
+## 测试结果
+

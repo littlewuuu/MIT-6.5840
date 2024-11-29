@@ -76,6 +76,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	// step 4
 	reply.Success = true
 	rf.logs = append(rf.logs[:args.PrevLogIndex+1], args.Entries...)
+	rf.persist()
 	LOG(rf.me, rf.currentTerm, DLog2, "<- S%d, Append log success, (%d,%d]", args.LeaderId, args.PrevLogIndex, args.PrevLogIndex+len(args.Entries))
 
 	// step 5
@@ -142,7 +143,7 @@ func (rf *Raft) startReplication(term int) bool {
 			// update leader commitIndex
 			// 找出 matchIndex 中的中位数，作为全局的 commitIndex
 			majorityMatched := rf.getMajorityIndexLocked()
-			if majorityMatched > rf.commitIndex {
+			if majorityMatched > rf.commitIndex { // Figure 8
 				LOG(rf.me, rf.currentTerm, DApply, "Leader update commitIndex from %d to %d", rf.commitIndex, majorityMatched)
 				rf.commitIndex = majorityMatched
 				rf.applyCond.Signal()
