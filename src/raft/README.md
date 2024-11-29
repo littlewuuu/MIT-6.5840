@@ -75,7 +75,21 @@ ok      6.5840/raft     85.311s
 
 # Lab 3C
 
-### bug1 TestFigure8Unreliable3C
+## bugs-to fix
+
+```bash
+(raft) ~/GolandProjects/6.5840/src/raft$ dstest 3C -p 100 -n 1000                                                      ✹ ✭master 
+ Verbosity level set to 0
+Failed test 3C - 20241129_204946/out-TestReliableChurn3C.log
+Failed test 3C - 20241129_204946/3C_400.log
+┏━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Test ┃ Failed ┃ Total ┃          Time ┃
+┡━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ 3C   │      2 │  1000 │ 124.51 ± 8.84 │
+└──────┴────────┴───────┴───────────────┘
+```
+
+
 
 
 

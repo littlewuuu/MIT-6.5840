@@ -1,3 +1,4 @@
+/* replicateInterval 设置的太长*/
  Test (3C): Figure 8 (unreliable) ...
 708289 T0000 LOG1 S0 Reset Election Timer
 708290 T0000 LOG1 S1 Reset Election Timer

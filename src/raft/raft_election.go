@@ -136,7 +136,6 @@ func (rf *Raft) isElectionTimeOut() bool {
 }
 
 func (rf *Raft) startElection(term int) {
-	LOG(rf.me, rf.currentTerm, DDebug, "start election")
 
 	votes := 0
 	askVoteFromPeer := func(peer int, args *RequestVoteArgs) {
@@ -175,6 +174,7 @@ func (rf *Raft) startElection(term int) {
 
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
+	LOG(rf.me, rf.currentTerm, DDebug, "start election")
 
 	if rf.contextLostLocked(Candidate, term) {
 		LOG(rf.me, rf.currentTerm, DVote, "Lost Candidate to %s, abort RequestVote", rf.role)

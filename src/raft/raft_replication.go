@@ -22,10 +22,7 @@ type AppendEntriesReply struct {
 }
 
 func (rf *Raft) sendAppendEntriesRPC(server int, args *AppendEntriesArgs, reply *AppendEntriesReply) bool {
-	//LOG(rf.me, rf.currentTerm, DLog, "Send Append Entry to S%d", server)
 	ok := rf.peers[server].Call("Raft.AppendEntries", args, reply)
-	//LOG(rf.me, rf.currentTerm, DLog, "Recv Append Entry Reply from S%d", server)
-
 	return ok
 }
 
@@ -33,7 +30,7 @@ func (rf *Raft) sendAppendEntriesRPC(server int, args *AppendEntriesArgs, reply 
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
-	LOG(rf.me, rf.currentTerm, DVote, "Received AppendEntries RPC, from S%d,", args.LeaderId)
+	LOG(rf.me, rf.currentTerm, DVote, "Received AppendEntries RPC, from S%d, preLogTerm:%d, preLogIndex:%d, len(entries):%d", args.LeaderId, args.PrevLogTerm, args.PrevLogIndex, len(args.Entries))
 
 	reply.Success = false
 	reply.Term = rf.currentTerm
@@ -75,9 +72,19 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 	// step 4
 	reply.Success = true
+	// todo: Append any new entries not already in the log
+	//idx := args.PrevLogIndex + 1
+	//for _, entry := range args.Entries {
+	//	if len(rf.logs) <= idx {
+	//		rf.logs = append(rf.logs, entry)
+	//	} else if rf.logs[idx].Term != entry.Term {
+	//		rf.logs[idx] = entry
+	//	}
+	//	idx++
+	//}
 	rf.logs = append(rf.logs[:args.PrevLogIndex+1], args.Entries...)
 	rf.persist()
-	LOG(rf.me, rf.currentTerm, DLog2, "<- S%d, Append log success, (%d,%d]", args.LeaderId, args.PrevLogIndex, args.PrevLogIndex+len(args.Entries))
+	LOG(rf.me, rf.currentTerm, DLog2, "<- S%d, Append log success, (%d,%d], leader CommitIndex:%d", args.LeaderId, args.PrevLogIndex, args.PrevLogIndex+len(args.Entries), args.LeaderCommit)
 
 	// step 5
 	if args.LeaderCommit > rf.commitIndex {
@@ -143,7 +150,7 @@ func (rf *Raft) startReplication(term int) bool {
 			// update leader commitIndex
 			// 找出 matchIndex 中的中位数，作为全局的 commitIndex
 			majorityMatched := rf.getMajorityIndexLocked()
-			if majorityMatched > rf.commitIndex { // Figure 8
+			if majorityMatched > rf.commitIndex && rf.logs[majorityMatched].Term == rf.currentTerm { // Figure 8
 				LOG(rf.me, rf.currentTerm, DApply, "Leader update commitIndex from %d to %d", rf.commitIndex, majorityMatched)
 				rf.commitIndex = majorityMatched
 				rf.applyCond.Signal()

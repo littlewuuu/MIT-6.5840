@@ -38,7 +38,7 @@ const (
 	electionTimeoutMin time.Duration = 250 * time.Millisecond
 	electionTimeoutMax time.Duration = 400 * time.Millisecond
 
-	replicateInterval time.Duration = 200 * time.Millisecond // 要比选举超时时间要小，才能防止其他 peer 发起选举
+	replicateInterval time.Duration = 30 * time.Millisecond // 要比选举超时时间要小，才能防止其他 peer 发起选举
 )
 
 // as each Raft peer becomes aware that successive log entries are
