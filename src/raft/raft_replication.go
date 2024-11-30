@@ -103,6 +103,16 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 func (rf *Raft) startReplication(term int) bool {
 	replicateToPeer := func(peer int, args *AppendEntriesArgs) {
 		reply := &AppendEntriesReply{}
+
+		// 防止 sendAppendEntriesRPC 出现 data racing
+		rf.mu.Lock()
+		contextLost := rf.contextLostLocked(Leader, term)
+		rf.mu.Unlock()
+		if contextLost {
+			LOG(rf.me, rf.currentTerm, DLog, "-> S%d, Context Lost, T%d:Leader->T%d:%s", peer, term, rf.currentTerm, rf.role)
+			return
+		}
+
 		ok := rf.sendAppendEntriesRPC(peer, args, reply)
 
 		rf.mu.Lock()
