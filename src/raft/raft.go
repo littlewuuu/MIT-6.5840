@@ -41,6 +41,10 @@ const (
 	replicateInterval time.Duration = 30 * time.Millisecond // 要比选举超时时间要小，才能防止其他 peer 发起选举
 )
 
+const (
+	InvalidIndex int = 0
+)
+
 // as each Raft peer becomes aware that successive log entries are
 // committed, the peer should send an ApplyMsg to the service (or
 // tester) on the same server, via the applyCh passed to Make(). set
@@ -83,7 +87,7 @@ type Raft struct {
 	// need to persist
 	currentTerm int
 	votedFor    int
-	logs        []LogEntry
+	logs        *Log
 
 	// leader only
 	matchIndex []int
@@ -109,15 +113,6 @@ func (rf *Raft) GetState() (int, bool) {
 	return rf.currentTerm, rf.role == Leader
 }
 
-// the service says it has created a snapshot that has
-// all info up to and including index. this means the
-// service no longer needs the log through (and including)
-// that index. Raft should now trim its log as much as possible.
-func (rf *Raft) Snapshot(index int, snapshot []byte) {
-	// Your code here (3D).
-
-}
-
 func (rf *Raft) becomeFollowerLocked(term int) {
 	if term < rf.currentTerm {
 		LOG(rf.me, rf.currentTerm, DError, "Can not become follower, lower term: T%d", term)
@@ -136,6 +131,7 @@ func (rf *Raft) becomeCandidateLocked() {
 		LOG(rf.me, rf.currentTerm, DVote, "Leader can not become candidate")
 		return
 	}
+	// election timer rest condition 2
 	rf.resetElectionTimerLocked()
 	rf.role = Candidate
 	rf.currentTerm++
@@ -155,7 +151,7 @@ func (rf *Raft) becomeLeaderLocked() {
 		if peer == rf.me {
 			continue
 		}
-		rf.nextIndex[peer] = len(rf.logs)
+		rf.nextIndex[peer] = rf.logs.size()
 		rf.matchIndex[peer] = 0
 	}
 }
@@ -181,19 +177,19 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 		return -1, -1, false
 	}
 
-	rf.logs = append(rf.logs, LogEntry{
+	rf.logs.append(LogEntry{
 		Command:      command,
 		CommandValid: true,
 		Term:         rf.currentTerm,
 	})
 	rf.persist()
 
-	rf.nextIndex[rf.me] = len(rf.logs) - 1
-	rf.matchIndex[rf.me] = len(rf.logs) - 1
+	rf.nextIndex[rf.me] = rf.logs.size() - 1
+	rf.matchIndex[rf.me] = rf.logs.size() - 1
 
-	LOG(rf.me, rf.currentTerm, DLeader, "Leader accept Log, Index:%d, T%d", len(rf.logs)-1, rf.currentTerm)
+	LOG(rf.me, rf.currentTerm, DLeader, "Leader accept Log, Index:%d, T%d", rf.logs.size()-1, rf.currentTerm)
 
-	return len(rf.logs) - 1, rf.currentTerm, true
+	return rf.logs.size() - 1, rf.currentTerm, true
 }
 
 // the tester doesn't halt goroutines created by Raft after each test,
@@ -244,7 +240,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	rf.applyCond = sync.NewCond(&rf.mu)
 	rf.commitIndex = 0
 	rf.lastApplied = 0
-	rf.logs = append(rf.logs, LogEntry{Term: 0}) // dummy entry, make sure log index start from 1
+	rf.logs = NewLog(0, 0, nil, nil) // dummy entry, make sure log index start from 1
 
 	rf.matchIndex = make([]int, len(peers))
 	rf.nextIndex = make([]int, len(peers))

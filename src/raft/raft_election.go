@@ -92,6 +92,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	reply.VoteGranted = true
 	rf.votedFor = args.CandidateId
 	rf.persist()
+	// election timer reset condition 3
 	rf.resetElectionTimerLocked()
 	LOG(rf.me, rf.currentTerm, DVote, "-> S%d, vote granted", args.CandidateId)
 }
@@ -116,9 +117,7 @@ func (rf *Raft) electionTicker() {
 
 // check if candidate's log is at least as up-to-date as rf.me
 func (rf *Raft) isCandidateUptoDate(candidateLastLogTerm, candidateLastLogIndex int) bool {
-	logLen := len(rf.logs)
-	lastLogTerm := rf.logs[logLen-1].Term
-	lastLogIndex := logLen - 1
+	lastLogIndex, lastLogTerm := rf.logs.last()
 	LOG(rf.me, rf.currentTerm, DVote, "Compare last log, Me: [%d]T%d, Candidate: [%d]T%d", lastLogIndex, lastLogTerm, candidateLastLogIndex, candidateLastLogTerm)
 	return (candidateLastLogTerm > lastLogTerm) || (candidateLastLogTerm == lastLogTerm && candidateLastLogIndex >= lastLogIndex)
 }
@@ -140,7 +139,7 @@ func (rf *Raft) startElection(term int) {
 	votes := 0
 	askVoteFromPeer := func(peer int, args *RequestVoteArgs) {
 		reply := &RequestVoteReply{}
-		ok := rf.sendRequestVoteRPC(peer, args, reply)
+		ok := rf.sendRequestVoteRPC(peer, args, reply) // do not call RPC with lock
 
 		rf.mu.Lock()
 		defer rf.mu.Unlock()
@@ -180,6 +179,8 @@ func (rf *Raft) startElection(term int) {
 		LOG(rf.me, rf.currentTerm, DVote, "Lost Candidate to %s, abort RequestVote", rf.role)
 		return
 	}
+
+	lastLogIdx, lastLogTerm := rf.logs.last()
 	for peer := range rf.peers {
 		if peer == rf.me {
 			votes++
@@ -188,8 +189,8 @@ func (rf *Raft) startElection(term int) {
 		args := &RequestVoteArgs{
 			Term:         rf.currentTerm,
 			CandidateId:  rf.me,
-			LastLogIndex: len(rf.logs) - 1,
-			LastLogTerm:  rf.logs[len(rf.logs)-1].Term,
+			LastLogIndex: lastLogIdx,
+			LastLogTerm:  lastLogTerm,
 		}
 		go askVoteFromPeer(peer, args)
 	}
