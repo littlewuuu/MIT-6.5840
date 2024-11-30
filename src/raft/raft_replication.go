@@ -48,7 +48,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	}
 	rf.resetElectionTimerLocked()
 
-	// step 2
+	// step 2.1
 	if len(rf.logs) <= args.PrevLogIndex {
 		LOG(rf.me, rf.currentTerm, DLog2, "<-%d, Reject append log, no entry at preLogIndex:%d", args.LeaderId, args.PrevLogIndex)
 		reply.ConflictIndex = len(rf.logs)
@@ -56,7 +56,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		return
 	}
 
-	// step 3
+	// step 2.2
 	log := rf.logs[args.PrevLogIndex]
 	if log.Term != args.PrevLogTerm {
 		LOG(rf.me, rf.currentTerm, DLog2, "<-%d, log at preLogIndex:%d has different T%d than T%d", args.LeaderId, args.PrevLogIndex, log.Term, args.PrevLogTerm)
@@ -70,19 +70,17 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		return
 	}
 
-	// step 4
+	// step 3,4
 	reply.Success = true
-	// todo: Append any new entries not already in the log
-	//idx := args.PrevLogIndex + 1
-	//for _, entry := range args.Entries {
-	//	if len(rf.logs) <= idx {
-	//		rf.logs = append(rf.logs, entry)
-	//	} else if rf.logs[idx].Term != entry.Term {
-	//		rf.logs[idx] = entry
-	//	}
-	//	idx++
-	//}
-	rf.logs = append(rf.logs[:args.PrevLogIndex+1], args.Entries...)
+	idx := args.PrevLogIndex + 1
+	for _, entry := range args.Entries {
+		if len(rf.logs) <= idx {
+			rf.logs = append(rf.logs, entry)
+		} else if rf.logs[idx].Term != entry.Term { // step 3
+			rf.logs = append(rf.logs[:idx], entry)
+		}
+		idx++
+	}
 	rf.persist()
 	LOG(rf.me, rf.currentTerm, DLog2, "<- S%d, Append log success, (%d,%d], leader CommitIndex:%d", args.LeaderId, args.PrevLogIndex, args.PrevLogIndex+len(args.Entries), args.LeaderCommit)
 

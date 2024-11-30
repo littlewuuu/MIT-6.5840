@@ -75,23 +75,34 @@ ok      6.5840/raft     85.311s
 
 # Lab 3C
 
-## bugs-to fix
+## bugs
+
+### bug1
+
+data racing
+
+fix：见 gitlog
+
+### bug2
+
+收到过期的 AppendEntries RPC
+
+fix：严格遵守 fig2 AppendEntries RPC receiver implementation
+
+### bug3
+
+applyTicker 没有被唤醒
+
+## 测试结果
 
 ```bash
-(raft) ~/GolandProjects/6.5840/src/raft$ dstest 3C -p 100 -n 1000                                                      ✹ ✭master 
+(raft) ~/GolandProjects/6.5840/src/raft$ dstest 3C -p 100 -n 1000                                                                                                         1 ↵  ➜ ✹ ✭master 
  Verbosity level set to 0
-Failed test 3C - 20241129_204946/out-TestReliableChurn3C.log
-Failed test 3C - 20241129_204946/3C_400.log
 ┏━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃ Test ┃ Failed ┃ Total ┃          Time ┃
 ┡━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━┩
-│ 3C   │      2 │  1000 │ 124.51 ± 8.84 │
+│ 3C   │      0 │  1000 │ 125.05 ± 6.87 │
 └──────┴────────┴───────┴───────────────┘
+
 ```
-
-
-
-
-
-## 测试结果
 
