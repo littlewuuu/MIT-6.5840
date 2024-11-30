@@ -124,7 +124,7 @@ func (rf *Raft) startReplication(term int) bool {
 
 		if !ok {
 			LOG(rf.me, rf.currentTerm, DLog, "-> S%d, Lost or crashed", peer)
-			// note to return
+			// note: must return
 			return
 		}
 
@@ -163,7 +163,8 @@ func (rf *Raft) startReplication(term int) bool {
 			if majorityMatched > rf.commitIndex && rf.logs[majorityMatched].Term == rf.currentTerm { // Figure 8
 				LOG(rf.me, rf.currentTerm, DApply, "Leader update commitIndex from %d to %d", rf.commitIndex, majorityMatched)
 				rf.commitIndex = majorityMatched
-				rf.applyCond.Signal()
+				//rf.applyCond.Signal()
+				rf.applyCond.Broadcast()
 			}
 		}
 	}
