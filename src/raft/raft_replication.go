@@ -57,19 +57,29 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		reply.ConflictTerm = -1
 		return
 	}
+	if rf.logs.snapshotLastIdx > args.PrevLogIndex { // RPC's PrevLogIndex is already taken into current node's snapshot, this rpc is outdated
+		reply.ConflictTerm = rf.logs.snapshotLastTerm
+		reply.ConflictIndex = rf.logs.snapshotLastIdx
+		LOG(rf.me, rf.currentTerm, DLog2, "<- S%d, Reject append log, already in snapshot, follower log truncated in %d", args.LeaderId, rf.logs.snapshotLastIdx)
+		return
+	}
 
 	// step 2.2
 	log := rf.logs.at(args.PrevLogIndex)
 	if log.Term != args.PrevLogTerm {
 		LOG(rf.me, rf.currentTerm, DLog2, "<-%d, log at preLogIndex:%d has different T%d than T%d", args.LeaderId, args.PrevLogIndex, log.Term, args.PrevLogTerm)
 		reply.ConflictTerm = rf.logs.at(args.PrevLogIndex).Term
-		// find first log's index whose term == rf.logs[args.PrevLogIndex].Term
-		idx := args.PrevLogIndex
-		for idx > 0 && rf.logs.at(idx).Term == reply.ConflictTerm {
-			idx--
-		}
-		reply.ConflictIndex = idx + 1
+		// find first log's index whose term == rf.logs[args.PrevLogIndex].Term,
+		reply.ConflictIndex = rf.logs.firstFor(reply.ConflictTerm)
 		return
+
+		// wrong way for finding reply.ConflictIndex: first log's index may in snapshot
+		//idx := args.PrevLogIndex
+		//for idx > 0 && rf.logs.at(idx).Term == reply.ConflictTerm {
+		//	idx--
+		//}
+		//reply.ConflictIndex = idx + 1
+
 	}
 
 	// step 3,4
@@ -135,22 +145,18 @@ func (rf *Raft) startReplication(term int) bool {
 		}
 
 		// handle reply
-		if !reply.Success { // AppendEntries failed, need set nextIndex[peer]
+		if !reply.Success { // AppendEntries failed, need reset nextIndex[peer]
 			oldNextIndex := rf.nextIndex[peer]
 			if reply.ConflictTerm != -1 {
-				idx := args.PrevLogIndex
-				for idx > 0 && rf.logs.at(idx).Term != reply.ConflictTerm {
-					idx--
-				}
-				if idx == 0 { // leader does not contain any log with term == reply.ConflictIndex
-					rf.nextIndex[peer] = reply.ConflictIndex
+				firstIdx := rf.logs.firstFor(reply.ConflictTerm)
+				if firstIdx != InvalidIndex {
+					rf.nextIndex[peer] = firstIdx
 				} else {
-					rf.nextIndex[peer] = idx + 1
+					rf.nextIndex[peer] = reply.ConflictIndex
 				}
 			} else {
 				rf.nextIndex[peer] = reply.ConflictIndex
 			}
-
 			LOG(rf.me, rf.currentTerm, DLog, "-> S%d failed, set nextIndex from %d to %d", peer, oldNextIndex, rf.nextIndex[peer])
 			return
 		} else { // success
@@ -179,6 +185,20 @@ func (rf *Raft) startReplication(term int) bool {
 	for peer := range rf.peers {
 		if peer != rf.me {
 			prevLogIndex := rf.nextIndex[peer] - 1
+
+			if prevLogIndex < rf.logs.snapshotLastIdx { // 需要先发送一个 snapshot RPC
+				args := &InstallSnapshotArgs{
+					Term:              term,
+					LeaderId:          rf.me,
+					LastIncludedIndex: rf.logs.snapshotLastIdx,
+					LastIncludedTerm:  rf.logs.snapshotLastTerm,
+					Data:              rf.logs.snapshot,
+				}
+				LOG(rf.me, rf.currentTerm, DDebug, "-> S%d, SendSnap, Args=%v", peer, args.toString())
+				go rf.installToPeer(peer, term, args)
+				continue
+			}
+
 			prevLogTerm := rf.logs.at(prevLogIndex).Term
 			args := &AppendEntriesArgs{
 				Term:         rf.currentTerm,

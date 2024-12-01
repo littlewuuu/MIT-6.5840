@@ -108,7 +108,7 @@ applyTicker 没有被唤醒
 
 # Lab 3D
 ## 重构 log
-### bug1(maybe)
+### bug1(maybe, not fixed)
 applyTicker 没有被唤醒
 ```bash
 (raft) ~/GolandProjects/6.5840/src/raft$ dstest 3C -p 100 -n 1000                                                                                                           1 ↵  ✹ ✭master 
@@ -122,3 +122,13 @@ Failed test 3C - 20241130_220513/3C_59.log
 
 ```
 
+## 最终结果
+```bash
+(raft) ~/GolandProjects/6.5840/src/raft$ dstest 3D -p 100 -n 1000                                                                                                           1 ↵  ✹ ✭master 
+ Verbosity level set to 0
+┏━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Test ┃ Failed ┃ Total ┃          Time ┃
+┡━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ 3D   │      0 │  1000 │ 223.06 ± 9.79 │
+└──────┴────────┴───────┴───────────────┘
+```

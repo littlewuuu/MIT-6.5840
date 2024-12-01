@@ -21,8 +21,7 @@ func (rf *Raft) persist() {
 	e.Encode(rf.votedFor)
 	rf.logs.persist(e)
 	raftstate := w.Bytes()
-	rf.persister.Save(raftstate, nil)
-	//rf.persister.Save(raftstate, rf.logs.snapshot)
+	rf.persister.Save(raftstate, rf.logs.snapshot) // snapshot 和其他的持久化信息是分开保存的
 	LOG(rf.me, rf.currentTerm, DPersist, "Persist: %v", rf.persistString())
 }
 
@@ -44,7 +43,15 @@ func (rf *Raft) readPersist(data []byte) {
 		LOG(rf.me, rf.currentTerm, DPersist, "Read log error: %v", err)
 		return
 	}
-	//rf.logs.snapshot = rf.persister.ReadSnapshot()
+	rf.logs.snapshot = rf.persister.ReadSnapshot()
+	LOG(rf.me, rf.currentTerm, DPersist, "Read from persist: %v", rf.persistString())
+
+	// as snapshot and other persist states are stored separately
+	// it may read updated snapshot while outdated logs
+	if rf.logs.snapshotLastIdx > rf.commitIndex {
+		rf.commitIndex = rf.logs.snapshotLastIdx
+		rf.lastApplied = rf.logs.snapshotLastTerm
+	}
 }
 
 func (rf *Raft) persistString() string {

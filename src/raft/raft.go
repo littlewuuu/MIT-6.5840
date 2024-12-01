@@ -97,6 +97,7 @@ type Raft struct {
 	lastApplied int
 	applyCh     chan ApplyMsg
 	applyCond   *sync.Cond
+	snapPending bool
 
 	role              Role
 	electionStartTime time.Time
@@ -241,6 +242,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	rf.commitIndex = 0
 	rf.lastApplied = 0
 	rf.logs = NewLog(0, 0, nil, nil) // dummy entry, make sure log index start from 1
+	rf.snapPending = false
 
 	rf.matchIndex = make([]int, len(peers))
 	rf.nextIndex = make([]int, len(peers))
